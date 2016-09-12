@@ -34,7 +34,7 @@ try:
             else:
                 camera.stop_preview()
         elif key == chr(27):
-            break;
+            break
         else:
             print("You pressed", key)
 finally:
