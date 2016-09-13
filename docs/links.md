@@ -1,0 +1,4 @@
+- [picamera](https://picamera.readthedocs.io/en/release-1.12/)
+- [curses](https://docs.python.org/3/library/curses.html)
+- [curses programming with Python](https://docs.python.org/3/howto/curses.html)
+- [urwid](http://urwid.org/index.html)
