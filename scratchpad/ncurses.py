@@ -5,19 +5,19 @@ import platform
 
 if platform.system() == "Darwin":
 	# create mock class for Pi Camera
-	class Camera:
+	class PiCamera:
 		def __init__(self):
 			self.brightness = 10
 			self.contrast = 24
 else:
-	import picamera
+	from picamera import PiCamera
 
 properties = [
 	"brightness",
 	"contrast"
 ]
 
-camera = Camera()
+camera = PiCamera()
 
 def main(stdscr):
 	# clear screen
