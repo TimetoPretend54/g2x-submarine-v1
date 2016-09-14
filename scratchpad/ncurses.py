@@ -26,6 +26,7 @@ pad0 = Image.new('RGB', (
 pad0.paste(img0, (0, 0))
 o0 = camera.add_overlay(pad0.tostring(), size=img0.size)
 o0.layer = 3
+o0.alpha = 0
 
 img1 = Image.open('not-recording.png')
 pad1 = Image.new('RGB', (
@@ -34,6 +35,7 @@ pad1 = Image.new('RGB', (
 pad1.paste(img1, (0, 0))
 o1 = camera.add_overlay(pad1.tostring(), size=img1.size)
 o1.layer = 4
+o0.alpha = 0
 
 # create list of properties to display
 properties = [
