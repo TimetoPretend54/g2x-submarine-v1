@@ -97,7 +97,6 @@ def update_screen(stdscr):
 					break
 		except:
 			print("An exception occurred", file=sys.stderr)
-			pass
 
 	# move the cursor to a sensible location and update the screen
 	stdscr.move(curses.LINES - 1, 0)
@@ -107,16 +106,13 @@ def update_screen(stdscr):
 try:
 	def main(stdscr):
 		def sigwinch_handler(n, frame):
-			#curses.endwin()
-			#curses.initscr()
-			stdscr.refresh()
+			update_screen(stdscr)
 
 		signal.signal(signal.SIGWINCH, sigwinch_handler)
 
 		while True:
 			update_screen(stdscr)
 
-			# wait for a keypress
 			# TODO: process key here
 			#k = stdscr.getkey()
 			ch = stdscr.getch()
