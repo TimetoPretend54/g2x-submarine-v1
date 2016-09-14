@@ -16,7 +16,7 @@ try:
 
     while True:
         key = sys.stdin.read(1)[0]
-        
+
         if key == '-':
             if camera.brightness > 0:
                 camera.brightness -= 1
