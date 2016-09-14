@@ -54,7 +54,6 @@ properties = [
 
 # get maximum property name length for padding during display
 max_len = 0
-max_col = 0
 
 for property in properties:
     property_len = len(property)
@@ -63,12 +62,16 @@ for property in properties:
 
 
 def update_screen(stdscr):
-    global max_len, max_col, properties
+    global max_len, properties
     row = 0
     col = 0
+    max_col = 0
 
     # clear screen
     stdscr.clear()
+
+    info = "{}x{}".format(curses.COLS, curses.LINES)
+    stdscr.addstr(curses.LINES - 1, 0, info)
 
     # display properties
     for key in properties:
