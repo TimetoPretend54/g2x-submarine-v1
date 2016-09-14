@@ -34,7 +34,7 @@ properties = [
 	"image_denoise",
 	"image_effect",
 	"iso",
-	#"led",
+	#"led",				# this is a read-only boolean property and it is not available on the Pi 3
 	"meter_mode",
 	"resolution",
 	"rotation",
