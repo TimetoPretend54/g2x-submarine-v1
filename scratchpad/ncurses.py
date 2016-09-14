@@ -6,6 +6,7 @@ import signal
 import shutil
 import time
 import curses
+from PIL import Image
 
 if platform.system() == "Darwin":
     # use mock classes
@@ -16,6 +17,15 @@ else:
 
 # create access to camera
 camera = PiCamera()
+
+# create overlays
+img0 = Image.open('recording')
+o0 = camera.add_overlay(img0.tostring(), size=img0.size)
+o0.layer = 3
+
+img1 = Image.open('not-recording')
+o1 = camera.add_overlay(img1.tostring(), size=im1.size)
+o1.layer = 4
 
 # create list of properties to display
 properties = [
@@ -155,8 +165,12 @@ def main(stdscr):
                 timestamp = int(time.time())
                 filename = "g2x-{}.h264".format(timestamp)
                 camera.start_recording(filename)
+                o0.alpha = 100
+                o1.alpha = 0
             else:
                 camera.stop_recording()
+                o0.alpha = 0
+                o1.alpha = 100
         else:
             print("Unhandled key: " + ch, file=sys.stderr)
 
