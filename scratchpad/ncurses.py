@@ -20,11 +20,19 @@ camera = PiCamera()
 
 # create overlays
 img0 = Image.open('recording.png')
-o0 = camera.add_overlay(img0.tostring(), size=img0.size)
+pad0 = Image.new('RGB', (
+    ((img0.size[0] + 31) // 32) * 32,
+    ((img0.size[1] + 15) // 16) * 16))
+pad0.paste(img0, (0, 0))
+o0 = camera.add_overlay(pad0.tostring(), size=img0.size)
 o0.layer = 3
 
 img1 = Image.open('not-recording.png')
-o1 = camera.add_overlay(img1.tostring(), size=img1.size)
+pad1 = Image.new('RGB', (
+    ((img1.size[0] + 31) // 32) * 32,
+    ((img1.size[1] + 15) // 16) * 16))
+pad1.paste(img1, (0, 0))
+o1 = camera.add_overlay(pad1.tostring(), size=img1.size)
 o1.layer = 4
 
 # create list of properties to display
