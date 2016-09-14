@@ -1,0 +1,35 @@
+# TODO
+
+- Start/stop preview
+- Start/stop record
+  - Use overlay to indicate if currently recording
+  - NOTE: can't use text as that will become part of the saved video
+  - Overlays are not included in the saved video
+  - When recording starts, use a timestamp for the video file
+- Increase/decrease brightness
+- Increase/decrease contrast
+- Change white balance setting?
+- Change ISO?
+- Change framerate?
+  - Most likely we will use 30 fps only
+- Change resolution?
+  - Most likely we will use 
+- Consider
+	- analog_gain
+	- awb_gains
+	- color_effects
+	- exposure_mode
+	- exposure_speed
+	- hflip
+	- vflip
+	- video_denoise
+	- video_stabilization
+	- image_effect
+	- led
+	- meter_mode
+	- rotation
+	- saturation
+	- sharpness
+	- shutter_speed
+- Allow annotations?
+  - These are included in the video recording
