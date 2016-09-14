@@ -35,5 +35,5 @@ class PiCamera:
 		self.video_stabilization   = False
 		self.zoom                  = (0.0, 0.0, 1.0, 1.0)
 
-	def close():
+	def close(self):
 		pass
