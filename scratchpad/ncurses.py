@@ -35,7 +35,7 @@ pad1 = Image.new('RGB', (
 pad1.paste(img1, (0, 0))
 o1 = camera.add_overlay(pad1.tostring(), size=img1.size)
 o1.layer = 4
-o0.alpha = 0
+o1.alpha = 0
 
 # create list of properties to display
 properties = [
@@ -175,12 +175,12 @@ def main(stdscr):
                 timestamp = int(time.time())
                 filename = "g2x-{}.h264".format(timestamp)
                 camera.start_recording(filename)
-                o0.alpha = 100
+                o0.alpha = 255
                 o1.alpha = 0
             else:
                 camera.stop_recording()
                 o0.alpha = 0
-                o1.alpha = 100
+                o1.alpha = 255
         else:
             print("Unhandled key: " + ch, file=sys.stderr)
 
