@@ -4,6 +4,7 @@ import curses
 import platform
 import sys
 import signal
+import shutil
 
 if platform.system() == "Darwin":
     from mockcamera import PiCamera
@@ -70,9 +71,6 @@ def update_screen(stdscr):
     # clear screen
     stdscr.clear()
 
-    info = "{}x{}".format(curses.COLS, curses.LINES)
-    stdscr.addstr(curses.LINES - 1, 0, info)
-
     # display properties
     for key in properties:
         # just in case we have an invalid property, wrap this iteration in
@@ -110,9 +108,10 @@ def update_screen(stdscr):
 
 
 def sigwinch_handler(n, frame):
-    # update_screen(stdscr)
-    curses.endwin()
-    curses.initscr()
+    # based on example 5 at http://www.programcreek.com/python/example/9546/curses.KEY_RESIZE
+    size = shutil.get_terminal_size()
+    curses.resizeterm(size.lines, size.columns)
+    curses.ungetch(curses.KEY_RESIZE)
 
 
 # display all current property values
@@ -120,12 +119,17 @@ def main(stdscr):
     while True:
         update_screen(stdscr)
 
-        # k = stdscr.getkey()
-        ch = stdscr.getch()
+        if False:
+            k = stdscr.getkey()
 
-        # TODO: process keys here
-        if ch == ord("q"):
-            break
+            if k == "q":
+                break;
+        else:
+            ch = stdscr.getch()
+
+            # TODO: process keys here
+            if ch == ord("q"):
+                break
 
 
 try:
