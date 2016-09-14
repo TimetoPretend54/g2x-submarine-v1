@@ -117,10 +117,10 @@ try:
         while True:
             update_screen(stdscr)
 
-            # TODO: process key here
             # k = stdscr.getkey()
             ch = stdscr.getch()
 
+            # TODO: process keys here
             if ch == ord("q"):
                 break
 
