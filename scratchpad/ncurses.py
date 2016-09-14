@@ -4,18 +4,14 @@ import curses
 import platform
 
 if platform.system() == "Darwin":
-	# create mock class for Pi Camera
-	class PiCamera:
-		def __init__(self):
-			self.brightness = 10
-			self.contrast = 24
-
-		def close():
-			pass
+	from mockcamera import PiCamera
 else:
-	# assumes we're running on Raspberry Pi
 	from picamera import PiCamera
 
+# create access to camera
+camera = PiCamera()
+
+# create list of properties to display
 properties = [
 	"analog_gain",
 	"annotate_text",
@@ -52,8 +48,7 @@ properties = [
 	"zoom"
 ]
 
-camera = PiCamera()
-
+# display all current property values
 try:
 	def main(stdscr):
 		# clear screen
@@ -62,7 +57,8 @@ try:
 		row = 0
 		col = 0
 		for key in properties:
-			print("key = ", key)
+			# just in case we have an invalid property, wrap this iteration in
+			# a try/except statement
 			try:
 				value = getattr(camera, key)
 				string = key + ": " + str(value)
@@ -75,8 +71,12 @@ try:
 			except:
 				pass
 
+		# move the cursor to a sensible location and update the screen
 		stdscr.move(curses.LINES - 1, 0)
 		stdscr.refresh()
+
+		# wait for a keypress
+		# TODO: process key here
 		stdscr.getkey()
 
 	curses.wrapper(main)
