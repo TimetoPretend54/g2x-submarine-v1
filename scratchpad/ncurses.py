@@ -18,7 +18,7 @@ properties = [
     "analog_gain",
     "annotate_text",
     "annotate_text_size",
-    #"awb_gains",
+    # "awb_gains",
     "awb_mode",
     "brightness",
     "color_effects",
@@ -36,7 +36,9 @@ properties = [
     "image_denoise",
     "image_effect",
     "iso",
-    #"led",             # this is a read-only boolean property and it is not available on the Pi 3
+    # the follwing is a read-only boolean property and it is not available on
+    # the Pi 3
+    # "led",
     "meter_mode",
     "resolution",
     "rotation",
@@ -59,6 +61,7 @@ for property in properties:
     if max_len < property_len:
         max_len = property_len
 
+
 def update_screen(stdscr):
     global max_len, max_col, properties
     row = 0
@@ -73,8 +76,8 @@ def update_screen(stdscr):
         # a try/except statement
         try:
             # display key/value on screen
-            # NOTE: we probably need to handle the case where the current string
-            # cannot fit in the current row
+            # NOTE: we probably need to handle the case where the current
+            # string cannot fit in the current row
             value = getattr(camera, key)
             string = key.rjust(max_len) + ": " + str(value)
             stdscr.addstr(row, col, string)
@@ -102,6 +105,7 @@ def update_screen(stdscr):
     stdscr.move(curses.LINES - 1, 0)
     stdscr.refresh()
 
+
 # display all current property values
 try:
     def main(stdscr):
@@ -114,7 +118,7 @@ try:
             update_screen(stdscr)
 
             # TODO: process key here
-            #k = stdscr.getkey()
+            # k = stdscr.getkey()
             ch = stdscr.getch()
 
             if ch == ord("q"):
