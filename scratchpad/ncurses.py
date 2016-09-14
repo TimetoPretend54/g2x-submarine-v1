@@ -38,7 +38,7 @@ properties = [
 	"image_denoise",
 	"image_effect",
 	"iso",
-	"led",
+	#"led",
 	"meter_mode",
 	"resolution",
 	"rotation",
@@ -62,14 +62,18 @@ try:
 		row = 0
 		col = 0
 		for key in properties:
-			value = getattr(camera, key)
-			string = key + ": " + str(value)
-			stdscr.addstr(row, col, string)
-			row = row + 1
+			print("key = ", key)
+			try:
+				value = getattr(camera, key)
+				string = key + ": " + str(value)
+				stdscr.addstr(row, col, string)
+				row = row + 1
 
-			if row >= curses.LINES:
-				row = 0
-				col += 20
+				if row >= curses.LINES:
+					row = 0
+					col += 20
+			except:
+				pass
 
 		stdscr.move(curses.LINES - 1, 0)
 		stdscr.refresh()
