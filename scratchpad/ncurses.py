@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 
-import curses
-import platform
 import sys
+import platform
 import signal
 import shutil
+import time
+import curses
 
 if platform.system() == "Darwin":
+    # use mock classes
     from mockcamera import PiCamera
 else:
+    # assume we're on a raspberry pi
     from picamera import PiCamera
 
 # create access to camera
@@ -108,7 +111,8 @@ def update_screen(stdscr):
 
 
 def sigwinch_handler(n, frame):
-    # based on example 5 at http://www.programcreek.com/python/example/9546/curses.KEY_RESIZE
+    # based on example 5 at
+    # http://www.programcreek.com/python/example/9546/curses.KEY_RESIZE
     size = shutil.get_terminal_size()
     curses.resizeterm(size.lines, size.columns)
     curses.ungetch(curses.KEY_RESIZE)
@@ -116,20 +120,45 @@ def sigwinch_handler(n, frame):
 
 # display all current property values
 def main(stdscr):
+    preview = False
+    recording = False
+
     while True:
         update_screen(stdscr)
 
-        if False:
-            k = stdscr.getkey()
+        ch = stdscr.getch()
 
-            if k == "q":
-                break;
+        # TODO: process keys here
+        if ch == ord("q"):
+            break
+        elif ch == ord("-"):
+            if camera.brightness > 0:
+                camera.brightness -= 1
+        elif ch == ord("="):
+            if camera.brightness < 100:
+                camera.brightness += 1
+        elif ch == ord("_"):
+            if camera.contrast > -100:
+                camera.contrast -= 1
+        elif ch == ord("+"):
+            if camera.contrast < 100:
+                camera.contrast -= 1
+        elif ch == ord("p"):
+            preview = not preview
+            if preview:
+                camera.start_preview()
+            else:
+                camera.stop_preview()
+        elif ch == ord("r"):
+            recording = not recording
+            if recording:
+                timestamp = int(time.time())
+                filename = "g2x-{}.h264".format(timestamp)
+                camera.start_recording(filename)
+            else:
+                camera.stop_recording()
         else:
-            ch = stdscr.getch()
-
-            # TODO: process keys here
-            if ch == ord("q"):
-                break
+            print("Unhandled key: " + ch, file=sys.stderr)
 
 
 try:
