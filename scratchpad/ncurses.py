@@ -109,24 +109,27 @@ def update_screen(stdscr):
     stdscr.refresh()
 
 
+def sigwinch_handler(n, frame):
+    # update_screen(stdscr)
+    curses.endwin()
+    curses.initscr()
+
+
 # display all current property values
+def main(stdscr):
+    while True:
+        update_screen(stdscr)
+
+        # k = stdscr.getkey()
+        ch = stdscr.getch()
+
+        # TODO: process keys here
+        if ch == ord("q"):
+            break
+
+
 try:
-    def main(stdscr):
-        def sigwinch_handler(n, frame):
-            update_screen(stdscr)
-
-        signal.signal(signal.SIGWINCH, sigwinch_handler)
-
-        while True:
-            update_screen(stdscr)
-
-            # k = stdscr.getkey()
-            ch = stdscr.getch()
-
-            # TODO: process keys here
-            if ch == ord("q"):
-                break
-
+    signal.signal(signal.SIGWINCH, sigwinch_handler)
     curses.wrapper(main)
 finally:
     camera.close()
