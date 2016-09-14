@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from curses import wrapper
+import curses
 import platform
 
 if platform.system() == "Darwin":
@@ -9,7 +9,11 @@ if platform.system() == "Darwin":
 		def __init__(self):
 			self.brightness = 10
 			self.contrast = 24
+
+		def close():
+			pass
 else:
+	# assumes we're running on Raspberry Pi
 	from picamera import PiCamera
 
 properties = [
@@ -19,18 +23,22 @@ properties = [
 
 camera = PiCamera()
 
-def main(stdscr):
-	# clear screen
-	stdscr.clear()
+try:
+	def main(stdscr):
+		# clear screen
+		stdscr.clear()
 
-	row = 0
-	for key in properties:
-		value = getattr(camera, key)
-		string = key + ": " + str(value)
-		stdscr.addstr(row, 0, string)
-		row = row + 1
+		row = 0
+		for key in properties:
+			value = getattr(camera, key)
+			string = key + ": " + str(value)
+			stdscr.addstr(row, 0, string)
+			row = row + 1
 
-	stdscr.refresh()
-	stdscr.getkey()
+		stdscr.move(curses.LINES - 1, 0)
+		stdscr.refresh()
+		stdscr.getkey()
 
-wrapper(main)
+	curses.wrapper(main)
+finally:
+	camera.close()
