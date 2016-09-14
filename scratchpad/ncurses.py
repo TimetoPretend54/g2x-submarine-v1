@@ -142,7 +142,7 @@ def main(stdscr):
                 camera.contrast -= 1
         elif ch == ord("+"):
             if camera.contrast < 100:
-                camera.contrast -= 1
+                camera.contrast += 1
         elif ch == ord("p"):
             preview = not preview
             if preview:
