@@ -2,6 +2,8 @@
 
 import curses
 import platform
+import sys
+import signal
 
 if platform.system() == "Darwin":
 	from mockcamera import PiCamera
@@ -16,7 +18,7 @@ properties = [
 	"analog_gain",
 	"annotate_text",
 	"annotate_text_size",
-	"awb_gains",
+	#"awb_gains",
 	"awb_mode",
 	"brightness",
 	"color_effects",
@@ -57,54 +59,70 @@ for property in properties:
 	if max_len < property_len:
 		max_len = property_len
 
+def update_screen(stdscr):
+	global max_len, max_col, properties
+	row = 0
+	col = 0
+
+	# clear screen
+	stdscr.clear()
+
+	# display properties
+	for key in properties:
+		# just in case we have an invalid property, wrap this iteration in
+		# a try/except statement
+		try:
+			# display key/value on screen
+			# NOTE: we probably need to handle the case where the current string
+			# cannot fit in the current row
+			value = getattr(camera, key)
+			string = key.rjust(max_len) + ": " + str(value)
+			stdscr.addstr(row, col, string)
+
+			# update max_col
+			current_end_col = col + len(string)
+
+			if current_end_col > max_col:
+				max_col = current_end_col
+
+			# update current row
+			row = row + 1
+
+			if row >= curses.LINES:
+				row = 0
+				col = max_col + 2
+
+				# we're off of the display
+				if col >= curses.COLS:
+					break
+		except:
+			print("An exception occurred", file=sys.stderr)
+			pass
+
+	# move the cursor to a sensible location and update the screen
+	stdscr.move(curses.LINES - 1, 0)
+	stdscr.refresh()
+
 # display all current property values
 try:
 	def main(stdscr):
-		global max_len, max_col, properties
+		def sigwinch_handler(n, frame):
+			#curses.endwin()
+			#curses.initscr()
+			stdscr.refresh()
 
-		# clear screen
-		stdscr.clear()
+		signal.signal(signal.SIGWINCH, sigwinch_handler)
 
-		row = 0
-		col = 0
-		for key in properties:
-			# just in case we have an invalid property, wrap this iteration in
-			# a try/except statement
-			try:
-				# display key/value on screen
-				# NOTE: we probably need to handle the case where the current string
-				# cannot fit in the current row
-				value = getattr(camera, key)
-				string = key.rjust(max_len) + ": " + str(value)
-				stdscr.addstr(row, col, string)
+		while True:
+			update_screen(stdscr)
 
-				# update max_col
-				current_end_col = col + len(string)
+			# wait for a keypress
+			# TODO: process key here
+			#k = stdscr.getkey()
+			ch = stdscr.getch()
 
-				if current_end_col > max_col:
-					max_col = current_end_col
-
-				# update current row
-				row = row + 1
-
-				if row >= curses.LINES:
-					row = 0
-					col = max_col + 2
-
-					# we're off of the display
-					if col >= curses.COLS:
-						break
-			except:
-				print("An exception occurred", file=sys.stderr)
-				pass
-
-		# move the cursor to a sensible location and update the screen
-		stdscr.move(curses.LINES - 1, 0)
-		stdscr.refresh()
-
-		# wait for a keypress
-		# TODO: process key here
-		stdscr.getkey()
+			if ch == ord("q"):
+				break
 
 	curses.wrapper(main)
 finally:
