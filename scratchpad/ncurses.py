@@ -48,6 +48,14 @@ properties = [
 	"zoom"
 ]
 
+# get maximum property name length for padding during display
+max_len = 0
+
+for property in properties:
+	property_len = len(property)
+	if max_len < property_len:
+		max_len = property_len
+
 # display all current property values
 try:
 	def main(stdscr):
@@ -61,7 +69,7 @@ try:
 			# a try/except statement
 			try:
 				value = getattr(camera, key)
-				string = key + ": " + str(value)
+				string = key.rjust(max_len) + ": " + str(value)
 				stdscr.addstr(row, col, string)
 				row = row + 1
 
