@@ -21,7 +21,8 @@ else:
 logging.basicConfig(filename="g2x.log", level=logging.DEBUG)
 
 # config
-use_overlay = False
+use_image_overlay = False
+use_text_overlay = True
 preview_window = (0, 0, 640, 480)
 camera_resolution = (1296, 972)  # "1080p"
 camera_framerate = 24
@@ -30,7 +31,7 @@ camera_framerate = 24
 camera = PiCamera(resolution=camera_resolution, framerate=camera_framerate)
 
 # create overlays
-if use_overlay:
+if use_image_overlay:
     img0 = Image.open('recording.png')
     pad0 = Image.new('RGB', (
         ((img0.size[0] + 31) // 32) * 32,
@@ -189,23 +190,23 @@ def main(stdscr):
         elif ch == ord("r"):
             recording = not recording
             if recording:
+                # calculate file name and start recording
                 timestamp = int(time.time())
                 filename = "g2x-{}.h264".format(timestamp)
                 camera.start_recording(filename)
 
-                if use_overlay:
+                if use_image_overlay:
                     o0.alpha = 255
                     o1.alpha = 0
-                else:
+                elif use_text_overlay:
                     camera.annotate_text = "Recording"
-                    # camera.annotate_text = "1234567890" * 4
             else:
                 camera.stop_recording()
 
-                if use_overlay:
+                if use_image_overlay:
                     o0.alpha = 0
                     o1.alpha = 255
-                else:
+                elif use_text_overlay:
                     camera.annotate_text = ""
         else:
             logging.debug("Unhandled key: " + str(ch))
