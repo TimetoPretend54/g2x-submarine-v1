@@ -1,6 +1,7 @@
 # TODO
 
 √ Start/stop preview
+  √ Control placement and size of preview
 √ Start/stop record
   - Use overlay to indicate if currently recording
 	  √ Overlays are not included in the saved video
