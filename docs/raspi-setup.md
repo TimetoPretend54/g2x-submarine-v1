@@ -15,7 +15,7 @@ Suggested configuration and software for Raspberry Pi 3
 
 - Open Menu->Preferences->Raspberry Pi Configuration
     - Open Interfaces tab
-    - Enable Camera, Serial, and I2C
+    - Enable Camera, SSH, I2C, and Serial
     - Open Localisation tab
     - Set values for Locale, Timezone, Keyboard, and WiFi Country
     - close and reboot
