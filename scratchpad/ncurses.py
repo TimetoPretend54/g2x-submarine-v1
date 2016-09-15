@@ -103,8 +103,11 @@ def update_screen(stdscr):
             # NOTE: we probably need to handle the case where the current
             # string cannot fit in the current row
             value = getattr(camera, key)
-            string = key.rjust(max_len) + ": " + str(value)
-            stdscr.addstr(row, col, string)
+            keystring = key.rjust(max_len) + ": "
+            stdscr.addstr(row, col, keystring)
+            valuestring = str(value)
+            string = keystring + valuestring
+            stdscr.addstr(row, col + len(keystring), valuestring, curses.A_BOLD)
 
             # update max_col
             current_end_col = col + len(string)
