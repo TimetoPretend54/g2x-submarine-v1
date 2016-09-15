@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+TMUX_ENV=dev
+
+tmux has-session -t "${TMUX_ENV}"
+if [ $? != 0 ]; then
+    tmux new-session -s "${TMUX_ENV}" -n ui -d
+    tmux new-window -n logs -t "${TMUX_ENV}"
+    tmux send-keys -t "${TMUX_ENV}:0.0" './ncurses.py' C-m
+    tmux send-keys -t "${TMUX_ENV}:1.0" 'tail -f g2x.log' C-m
+    tmux select-window -t "${TMUX_ENV}:0"
+fi
+
+tmux attach -t "${TMUX_ENV}"
+
