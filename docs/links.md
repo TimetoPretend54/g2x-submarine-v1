@@ -9,3 +9,4 @@
 # Raspberry Pi
 
 - [Run Script as Service](http://www.diegoacuna.me/how-to-run-a-script-as-a-service-in-raspberry-pi-raspbian-jessie/)
+- [Static IP Address](https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update)
