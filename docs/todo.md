@@ -16,6 +16,8 @@
   - Most likely we will use 1920x1080
   - ISSUE: This crops the image if we use higher than 15fps. The following posts suggests using 1296x972
     - https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=137702 (see first response)
+√ Allow annotations
+  - These are included in the video recording
 
 # Possible features
 - Change white balance setting?
@@ -37,5 +39,3 @@
 	- saturation
 	- sharpness
 	- shutter_speed
-- Allow annotations?
-  - These are included in the video recording
