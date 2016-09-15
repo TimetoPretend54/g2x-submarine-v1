@@ -6,7 +6,7 @@ import signal
 import shutil
 import time
 import curses
-from PIL import Image
+# from PIL import Image
 
 if platform.system() == "Darwin":
     # use mock classes
@@ -19,23 +19,23 @@ else:
 camera = PiCamera()
 
 # create overlays
-img0 = Image.open('recording.png')
-pad0 = Image.new('RGB', (
-    ((img0.size[0] + 31) // 32) * 32,
-    ((img0.size[1] + 15) // 16) * 16))
-pad0.paste(img0, (0, 0))
-o0 = camera.add_overlay(pad0.tostring(), size=img0.size)
-o0.layer = 3
-o0.alpha = 0
+# img0 = Image.open('recording.png')
+# pad0 = Image.new('RGB', (
+#     ((img0.size[0] + 31) // 32) * 32,
+#     ((img0.size[1] + 15) // 16) * 16))
+# pad0.paste(img0, (0, 0))
+# o0 = camera.add_overlay(pad0.tostring(), size=img0.size)
+# o0.layer = 3
+# o0.alpha = 0
 
-img1 = Image.open('not-recording.png')
-pad1 = Image.new('RGB', (
-    ((img1.size[0] + 31) // 32) * 32,
-    ((img1.size[1] + 15) // 16) * 16))
-pad1.paste(img1, (0, 0))
-o1 = camera.add_overlay(pad1.tostring(), size=img1.size)
-o1.layer = 4
-o1.alpha = 0
+# img1 = Image.open('not-recording.png')
+# pad1 = Image.new('RGB', (
+#     ((img1.size[0] + 31) // 32) * 32,
+#     ((img1.size[1] + 15) // 16) * 16))
+# pad1.paste(img1, (0, 0))
+# o1 = camera.add_overlay(pad1.tostring(), size=img1.size)
+# o1.layer = 4
+# o1.alpha = 0
 
 # create list of properties to display
 properties = [
@@ -175,12 +175,14 @@ def main(stdscr):
                 timestamp = int(time.time())
                 filename = "g2x-{}.h264".format(timestamp)
                 camera.start_recording(filename)
-                o0.alpha = 255
-                o1.alpha = 0
+                # o0.alpha = 255
+                # o1.alpha = 0
+                camera.annotate_text = "Recording"
             else:
                 camera.stop_recording()
-                o0.alpha = 0
-                o1.alpha = 255
+                # o0.alpha = 0
+                # o1.alpha = 255
+                camera.annotate_text = ""
         else:
             print("Unhandled key: " + ch, file=sys.stderr)
 
