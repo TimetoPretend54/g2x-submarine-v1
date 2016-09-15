@@ -32,6 +32,7 @@ Suggested configuration and software for Raspberry Pi 3
     - Select your network
     - Enter your network password
 - Setup static IPv4 address
+    - Used for direct connect from a laptop/desktop. That setup requires a cross-over ethernet cable
     - see https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update
     - edit /etc/dhcpcd.conf
         - add `interface eth0\nstatic ip_address=192.168.0.x/24`
