@@ -178,6 +178,7 @@ def main(stdscr):
                 # o0.alpha = 255
                 # o1.alpha = 0
                 camera.annotate_text = "Recording"
+                # camera.annotate_text = "1234567890" * 4
             else:
                 camera.stop_recording()
                 # o0.alpha = 0
