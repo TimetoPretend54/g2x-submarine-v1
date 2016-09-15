@@ -25,6 +25,8 @@ Suggested configuration and software for Raspberry Pi 3
     - `sudo apt-get install vim`
         - optionally install color schemes like monokai, badwold, and solarized
     - `sudo apt-get install i2c-tools`
+        - optionally install smbus for i2c support in Python 3
+        - `sudo apt-get install python3-smbus`
     - `sudo apt-get install tmux`
 - Setup WiFi
     - Only need if using raspi 3 and if you wish to connect to your wifi
