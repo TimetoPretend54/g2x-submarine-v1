@@ -10,14 +10,16 @@
 √ Increase/decrease brightness
 √ Increase/decrease contrast
 √ Change framerate
-  - Using 24 fps, but see below
-  - ISSUE: From what I've read, the camera can only do 15fps full-sensor. Higher frame rates have to use less of the sensor
+  - Using 24 fps, but see "Change resolution" below
 √ Change resolution
-  - Most likely we will use 1920x1080
-  - ISSUE: This crops the image if we use higher than 15fps. The following posts suggests using 1296x972
-    - https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=137702 (see first response)
+  √ Using 1296x972
+  √ RESOLVED: Video is cropped if we use frame rates higher than 15fps. The following posts suggests using 1296x972
+    √ https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=137702 (see first response)
+    √ https://www.raspberrypi.org/blog/new-camera-mode-released/
 √ Allow annotations
-  - These are included in the video recording
+  √ These are included in the video recording
+- Resize terminal from command-line
+  - It looks like the terminal over the serial port is locked in at 80x24
 
 # Possible features
 - Change white balance setting?
