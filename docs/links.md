@@ -17,6 +17,7 @@
 	- 1296×730     1-49fps, video mode,           16:9 aspect , binned, full FOV (width), used for 720p
 	- 640×480   42.1-60fps, video mode,           up to VGAp60 binned
 	- 640×480   60.1-90fps, video mode,           up to VGAp90 binned
+- [Configure WiFi](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md)
 
 # 100BASE-FX (fiber)
 
