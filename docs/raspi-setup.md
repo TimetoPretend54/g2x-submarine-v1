@@ -33,6 +33,25 @@ Suggested configuration and software for Raspberry Pi 3
     - Click network icon in menbar (two computer icon at top-right)
     - Select your network
     - Enter your network password
+    - Alternately, you can configure wifi from the command line
+    ```
+    # find the name of the network you want to join
+    sudo iwlist wlan0 scan | grep "ESSID"
+    sudo vi /etc/wpa_supplicant/wpa_supplicant.conf
+    
+    # add the following replacing the network name and password, as appropriate
+    network={
+        ssid="Network Name"
+        psk="Network Password"
+    }
+
+    # restart the interface
+    sudo ifdown wlan0
+    sudo ifup wlan0
+
+    # after less than a minute the following should show a valid IP address
+    ifconfig wlan0
+    ```
 - Setup static IPv4 address
     - Used for direct connect from a laptop/desktop. That setup requires a cross-over ethernet cable
     - see https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update
