@@ -27,3 +27,7 @@
 - [Media Converter](http://us.edimax.com/edimax/merchandise/merchandise_detail/data/edimax/us/media_conventers_fast_ethernet/et-912_series/)
 - [Bulk Fiber](http://www.fibertronics-store.com/3mm-Duplex-Multimode-625-125m-Cable-Orange-PVC-M62DX02C3NV0.htm)
 - [1000' Outdoor Fiber](http://www.cablewholesale.com/products/fiber-optic/multimode-duplex-62.5-125/product-10f3-206nh.php?utm_source=GoogleShopping&utm_medium=cpc&utm_term=10F3-206NH&utm_campaign=6%20Fiber%20Indoor%2FOutdoor%20Fiber%20Optic%20Cable%2C%20Multimode%2C%2062.5%2F125%2C%20Black%2C%20Riser%20Rated%2C%20Spool%2C%201000%20foot&gclid=CNn5nrvFls8CFUeCfgodyaYCeA)
+
+# SD Cards
+
+- [SD Card Comparison](http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-microsd-card)
