@@ -18,6 +18,7 @@
 	- 640×480   42.1-60fps, video mode,           up to VGAp60 binned
 	- 640×480   60.1-90fps, video mode,           up to VGAp90 binned
 - [Configure WiFi](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md)
+- [Serial Info](http://elinux.org/RPi_Serial_Connection)
 
 # 100BASE-FX (fiber)
 
