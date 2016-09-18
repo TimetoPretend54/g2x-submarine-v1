@@ -17,3 +17,13 @@
 	- 1296×730     1-49fps, video mode,           16:9 aspect , binned, full FOV (width), used for 720p
 	- 640×480   42.1-60fps, video mode,           up to VGAp60 binned
 	- 640×480   60.1-90fps, video mode,           up to VGAp90 binned
+- [Configure WiFi](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md)
+
+# 100BASE-FX (fiber)
+
+- [USB Converter](http://www.fiberfin.com/index.php/products/network-solutions/usb-media-convertors/media-convertor-usb2-0-to-100base-fx-pof-gaiagrid.html)
+- [Media Converter](https://www.amazon.com/TRENDnet-100Base-TX-100Base-FX-Converter-TFC-110MSC/dp/B00007IFE8)
+- [Media Converter](https://www.computercablestore.com/fast-ethernet-fiber-media-converter-utp-to-100base-fx-lc-singlemode-20km-1310nm)
+- [Media Converter](http://us.edimax.com/edimax/merchandise/merchandise_detail/data/edimax/us/media_conventers_fast_ethernet/et-912_series/)
+- [Bulk Fiber](http://www.fibertronics-store.com/3mm-Duplex-Multimode-625-125m-Cable-Orange-PVC-M62DX02C3NV0.htm)
+- [1000' Outdoor Fiber](http://www.cablewholesale.com/products/fiber-optic/multimode-duplex-62.5-125/product-10f3-206nh.php?utm_source=GoogleShopping&utm_medium=cpc&utm_term=10F3-206NH&utm_campaign=6%20Fiber%20Indoor%2FOutdoor%20Fiber%20Optic%20Cable%2C%20Multimode%2C%2062.5%2F125%2C%20Black%2C%20Riser%20Rated%2C%20Spool%2C%201000%20foot&gclid=CNn5nrvFls8CFUeCfgodyaYCeA)
