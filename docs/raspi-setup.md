@@ -61,6 +61,14 @@ Suggested configuration and software for Raspberry Pi 3
         interface eth0
         static ip_address=192.168.0.x/24
         ```
+- Set terminal for `screen`
+    - `vim ~/.bash_profile`
+    - add the following
+    ```
+    if [[ $(tty) = /dev/ttyS* ]]; then
+        export TERM=screen-256color
+    fi
+    ```
 
 ## git
 
@@ -112,6 +120,8 @@ Suggested configuration and software for mac os machines
 - Open terminal
 - type `screen /dev/cu.usbserial 115200`
     - If you don't see anything, you may need to turn on serial support in the kernel on the raspi. See [Initial Setup](#initial-setup)
+- To exit `screen` type `type CTRL-A, then CTRL-\`
+- `[[ $(tty) = /dev/ttyS* ]] && TERM=screen-256color ]]`
 
 ## X Windows on mac os
 
