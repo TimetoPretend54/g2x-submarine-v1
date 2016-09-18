@@ -62,6 +62,8 @@ Suggested configuration and software for Raspberry Pi 3
         static ip_address=192.168.0.x/24
         ```
 - Set terminal for `screen`
+    - You can list `screen` terminal types with the following
+        - `find $(infocmp -D) -printf '%f\n' | sort -u | grep screen`
     - `vim ~/.bash_profile`
     - add the following
     ```
