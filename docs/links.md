@@ -20,6 +20,12 @@
 - [Configure WiFi](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md)
 - [Serial Info](http://elinux.org/RPi_Serial_Connection)
 
+# Pi Sense hat
+
+- [Sensor API](http://pythonhosted.org/sense-hat/api/#environmental-sensors)
+- [Source Code](https://github.com/RPi-Distro/python-sense-hat)
+- [Learning](https://astro-pi.org/resources/)
+
 # 100BASE-FX (fiber)
 
 - [USB Converter](http://www.fiberfin.com/index.php/products/network-solutions/usb-media-convertors/media-convertor-usb2-0-to-100base-fx-pof-gaiagrid.html)
