@@ -2,7 +2,7 @@
 
 from sense_hat import SenseHat
 import sqlite3
-import datetime
+import time
 
 sense = SenseHat()
 sense.clear()
@@ -21,12 +21,12 @@ connection = sqlite3.connect(dbfile)
 if create_table:
     cursor = connection.cursor()
     cursor.execute('''CREATE TABLE readings
-                      (date integer, device text, property text, value real)''')
+                      (date real, device text, property text, value real)''')
     connection.commit()
 
 
 def log(device, property, value):
-    now = datetime.datetime.utcnow()
+    now = time.time()
     values = (now, device, property, value)
 
     cursor = connection.cursor()
