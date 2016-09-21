@@ -19,15 +19,6 @@ Suggested configuration and software for Raspberry Pi 3
     - Open Localisation tab
     - Set values for Locale, Timezone, Keyboard, and WiFi Country
     - close and reboot
-- Open terminal
-    - `sudo apt-get update`
-    - `sudo apt-get upgrade`
-    - `sudo apt-get install vim`
-        - optionally install color schemes like monokai, badwold, and solarized
-    - `sudo apt-get install i2c-tools`
-        - optionally install smbus for i2c support in Python 3
-        - `sudo apt-get install python3-smbus`
-    - `sudo apt-get install tmux`
 - Setup WiFi
     - Only need if using raspi 3 and if you wish to connect to your wifi
     - Click network icon in menbar (two computer icon at top-right)
@@ -61,6 +52,15 @@ Suggested configuration and software for Raspberry Pi 3
         interface eth0
         static ip_address=192.168.0.x/24
         ```
+- Open terminal
+    - `sudo apt-get update`
+    - `sudo apt-get upgrade`
+    - `sudo apt-get install vim`
+        - optionally install color schemes like monokai, badwold, and solarized
+    - `sudo apt-get install i2c-tools`
+        - optionally install smbus for i2c support in Python 3
+        - `sudo apt-get install python3-smbus`
+    - `sudo apt-get install tmux`
 - Set terminal for `screen`
     - You can list `screen` terminal types with the following
         - `find $(infocmp -D) -printf '%f\n' | sort -u | grep screen`
