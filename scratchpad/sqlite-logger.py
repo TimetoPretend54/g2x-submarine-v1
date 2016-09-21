@@ -7,7 +7,22 @@ import datetime
 sense = SenseHat()
 sense.clear()
 
-connection = sqlite3.connect('test.db')
+dbfile = "test.db"
+create_table = True
+
+try:
+    with open(dbfile):
+        create_table = False
+except IOError:
+    pass
+
+connection = sqlite3.connect(dbfile)
+
+if create_table:
+    cursor = connection.cursor()
+    cursor.execute('''CREATE TABLE readings
+                      (date integer, device text, property text, value real)''')
+    connection.commit()
 
 
 def log(device, property, value):
