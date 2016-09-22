@@ -10,13 +10,7 @@ import sys
 import logging
 from sqlite_logger import SQLiteLogger
 from sense_hat import SenseHat
-
-if platform.system() == "Darwin":
-    # use mock classes
-    from mockcamera import PiCamera
-else:
-    # assume we're on a raspberry pi
-    from picamera import PiCamera
+from picamera import PiCamera
 
 sense = SenseHat()
 sense.clear()
