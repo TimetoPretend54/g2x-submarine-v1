@@ -247,3 +247,4 @@ try:
     curses.wrapper(main)
 finally:
     camera.close()
+    logger.close()

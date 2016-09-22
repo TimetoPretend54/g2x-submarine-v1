@@ -28,3 +28,7 @@ class SQLiteLogger:
         cursor = self.connection.cursor()
         cursor.execute("INSERT INTO readings VALUES(?,?,?,?)", values)
         self.connection.commit()
+
+
+    def close(self):
+        self.connection.close()
