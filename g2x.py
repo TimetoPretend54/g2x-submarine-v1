@@ -13,7 +13,7 @@ sense = SenseHat()
 sense.clear()
 
 # setup sensor logging
-logger = SQLiteLogger()
+data_logger = SQLiteLogger()
 
 # setup logging
 # timestamp = int(time.time())
@@ -210,21 +210,21 @@ def log_sensors():
     acceleration = sense.get_accelerometer_raw()
 
     # Environmental sensors
-    logger.log("SenseHat", "humidity", sense.get_humidity())
-    logger.log("SenseHat", "temperature_from_humidity", sense.get_temperature())
-    logger.log("SenseHat", "temperature_from_pressure", sense.get_temperature_from_pressure())
-    logger.log("SenseHat", "pressure", sense.get_pressure())
+    data_logger.log("SenseHat", "humidity", sense.get_humidity())
+    data_logger.log("SenseHat", "temperature_from_humidity", sense.get_temperature())
+    data_logger.log("SenseHat", "temperature_from_pressure", sense.get_temperature_from_pressure())
+    data_logger.log("SenseHat", "pressure", sense.get_pressure())
 
     # IMU sensors
-    logger.log("SenseHat", "orientation.pitch", orientation['pitch'])
-    logger.log("SenseHat", "orientation.roll", orientation['roll'])
-    logger.log("SenseHat", "orientation.yaw", orientation['yaw'])
-    logger.log("SenseHat", "compass.x", compass['x'])
-    logger.log("SenseHat", "compass.y", compass['y'])
-    logger.log("SenseHat", "compass.z", compass['z'])
-    logger.log("SenseHat", "accelerometer.x", acceleration['x'])
-    logger.log("SenseHat", "accelerometer.y", acceleration['y'])
-    logger.log("SenseHat", "accelerometer.z", acceleration['z'])
+    data_logger.log("SenseHat", "orientation.pitch", orientation['pitch'])
+    data_logger.log("SenseHat", "orientation.roll", orientation['roll'])
+    data_logger.log("SenseHat", "orientation.yaw", orientation['yaw'])
+    data_logger.log("SenseHat", "compass.x", compass['x'])
+    data_logger.log("SenseHat", "compass.y", compass['y'])
+    data_logger.log("SenseHat", "compass.z", compass['z'])
+    data_logger.log("SenseHat", "accelerometer.x", acceleration['x'])
+    data_logger.log("SenseHat", "accelerometer.y", acceleration['y'])
+    data_logger.log("SenseHat", "accelerometer.z", acceleration['z'])
 
 
 # display all current property values
@@ -247,4 +247,4 @@ try:
     curses.wrapper(main)
 finally:
     camera.close()
-    logger.close()
+    data_logger.close()
