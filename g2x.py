@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 
-import platform
 import signal
 import shutil
 import time
 import curses
-import select
-import sys
 import logging
 from sqlite_logger import SQLiteLogger
 from sense_hat import SenseHat
@@ -161,11 +158,6 @@ def sigwinch_handler(n, frame):
     curses.ungetch(curses.KEY_RESIZE)
 
 
-def key_ready():
-    dr, dw, de = select.select([sys.stdin], [], [], 0)
-    return dr != []
-
-
 def process_character(ch):
     global preview, recording
 
@@ -240,14 +232,14 @@ def main(stdscr):
     while True:
         update_screen(stdscr)
 
-        if key_ready():
-            ch = stdscr.getch()
-            if ch == ord("q"):
-                break
-            else:
-                process_character(ch)
-        else:
+        ch = stdscr.getch()
+
+        if ch == ord("q"):
+            break
+        elif ch == -1:
             log_sensors()
+        else:
+            process_character(ch)
 
 
 try:
