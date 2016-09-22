@@ -5,11 +5,10 @@
 # Useful when logged in over a serial line.
 # Copyright 2013 by Akkana Peck -- share and enjoy under the GPL v2 or later.
 
-import os, sys
+import os
+import sys
 import fcntl
-import posix
 import struct
-import time
 import re
 import termios
 import select
@@ -44,4 +43,3 @@ fcntl.ioctl(fd, termios.TIOCSWINSZ,
             struct.pack("HHHH", rows, cols, 0, 0))
 
 print "\nReset the terminal to", rows, "rows", cols, "cols"
-
