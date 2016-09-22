@@ -5,8 +5,11 @@ import signal
 import shutil
 import time
 import curses
-# from PIL import Image
+import select
+import sys
 import logging
+from sqlite_logger import SQLiteLogger
+from sense_hat import SenseHat
 
 if platform.system() == "Darwin":
     # use mock classes
@@ -14,6 +17,12 @@ if platform.system() == "Darwin":
 else:
     # assume we're on a raspberry pi
     from picamera import PiCamera
+
+sense = SenseHat()
+sense.clear()
+
+# setup sensor logging
+logger = SQLiteLogger()
 
 # setup logging
 # timestamp = int(time.time())
@@ -26,6 +35,8 @@ use_text_overlay = True
 preview_window = (0, 0, 640, 480)
 camera_resolution = (1296, 972)  # "1080p"
 camera_framerate = 24
+preview = False
+recording = False
 
 # create access to camera
 camera = PiCamera(resolution=camera_resolution, framerate=camera_framerate)
@@ -156,60 +167,93 @@ def sigwinch_handler(n, frame):
     curses.ungetch(curses.KEY_RESIZE)
 
 
+def key_ready():
+    dr, dw, de = select.select([sys.stdin], [], [], 0)
+    return dr != []
+
+
+def process_character(ch):
+    global preview, recording
+
+    if ch == ord("-"):
+        if camera.brightness > 0:
+            camera.brightness -= 1
+    elif ch == ord("="):
+        if camera.brightness < 100:
+            camera.brightness += 1
+    elif ch == ord("_"):
+        if camera.contrast > -100:
+            camera.contrast -= 1
+    elif ch == ord("+"):
+        if camera.contrast < 100:
+            camera.contrast += 1
+    elif ch == ord("p"):
+        preview = not preview
+        if preview:
+            camera.start_preview(fullscreen=False, window=preview_window)
+        else:
+            camera.stop_preview()
+    elif ch == ord("r"):
+        recording = not recording
+        if recording:
+            # calculate file name and start recording
+            timestamp = int(time.time())
+            filename = "g2x-{}.h264".format(timestamp)
+            camera.start_recording(filename)
+
+            if use_image_overlay:
+                o0.alpha = 255
+                o1.alpha = 0
+            elif use_text_overlay:
+                camera.annotate_text = "Recording"
+        else:
+            camera.stop_recording()
+
+            if use_image_overlay:
+                o0.alpha = 0
+                o1.alpha = 255
+            elif use_text_overlay:
+                camera.annotate_text = ""
+    else:
+        logging.debug("Unhandled key: " + str(ch))
+
+
+def log_sensors():
+    orientation = sense.get_orientation_radians()
+    compass = sense.get_compass_raw()
+    acceleration = sense.get_accelerometer_raw()
+
+    # Environmental sensors
+    logger.log("SenseHat", "humidity", sense.get_humidity())
+    logger.log("SenseHat", "temperature_from_humidity", sense.get_temperature())
+    logger.log("SenseHat", "temperature_from_pressure", sense.get_temperature_from_pressure())
+    logger.log("SenseHat", "pressure", sense.get_pressure())
+
+    # IMU sensors
+    logger.log("SenseHat", "orientation.pitch", orientation['pitch'])
+    logger.log("SenseHat", "orientation.roll", orientation['roll'])
+    logger.log("SenseHat", "orientation.yaw", orientation['yaw'])
+    logger.log("SenseHat", "compass.x", compass['x'])
+    logger.log("SenseHat", "compass.y", compass['y'])
+    logger.log("SenseHat", "compass.z", compass['z'])
+    logger.log("SenseHat", "accelerometer.x", acceleration['x'])
+    logger.log("SenseHat", "accelerometer.y", acceleration['y'])
+    logger.log("SenseHat", "accelerometer.z", acceleration['z'])
+
+
 # display all current property values
 def main(stdscr):
-    preview = False
-    recording = False
-
     while True:
         update_screen(stdscr)
 
-        ch = stdscr.getch()
-
-        # TODO: process keys here
-        if ch == ord("q"):
-            break
-        elif ch == ord("-"):
-            if camera.brightness > 0:
-                camera.brightness -= 1
-        elif ch == ord("="):
-            if camera.brightness < 100:
-                camera.brightness += 1
-        elif ch == ord("_"):
-            if camera.contrast > -100:
-                camera.contrast -= 1
-        elif ch == ord("+"):
-            if camera.contrast < 100:
-                camera.contrast += 1
-        elif ch == ord("p"):
-            preview = not preview
-            if preview:
-                camera.start_preview(fullscreen=False, window=preview_window)
+        if key_ready():
+            ch = stdscr.getch()
+            if ch == ord("q"):
+                break
             else:
-                camera.stop_preview()
-        elif ch == ord("r"):
-            recording = not recording
-            if recording:
-                # calculate file name and start recording
-                timestamp = int(time.time())
-                filename = "g2x-{}.h264".format(timestamp)
-                camera.start_recording(filename)
-
-                if use_image_overlay:
-                    o0.alpha = 255
-                    o1.alpha = 0
-                elif use_text_overlay:
-                    camera.annotate_text = "Recording"
-            else:
-                camera.stop_recording()
-
-                if use_image_overlay:
-                    o0.alpha = 0
-                    o1.alpha = 255
-                elif use_text_overlay:
-                    camera.annotate_text = ""
+                process_character(ch)
         else:
-            logging.debug("Unhandled key: " + str(ch))
+            log_sensors()
 
 
 try:
