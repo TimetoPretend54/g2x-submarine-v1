@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 from KeyDispatcher import KeyDispatcher
-import tty
-import sys
-import termios
+
 
 class Testing:
     def __init__(self):
@@ -15,6 +13,7 @@ class Testing:
 
     def quit(self):
         return False
+
 
 with KeyDispatcher() as dispatcher:
     handler = Testing()
