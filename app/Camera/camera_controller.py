@@ -7,15 +7,29 @@ class CameraController:
         self.camera = None
         self.resolution = resolution
         self.framerate = framerate
+        self.preview = False
+        self.record = False
 
-    def preview(self, state):
-        if state:
+    def __enter__(self):
+        self.camera = PiCamera(resolution=self.resolution, framerate=self.framerate)
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.camera.close()
+        self.camera = None
+
+    def toggle_preview(self):
+        self.preview = not self.preview
+
+        if self.preview:
             self.camera.start_preview()
         else:
             self.camera.stop_preview()
 
-    def record(self, state):
-        if state:
+    def toggle_record(self):
+        self.record = not self.record
+
+        if self.record:
             timestamp = int(time.time())
             filename = "g2x-{}.h264".format(timestamp)
             self.camera.start_recording(filename)
@@ -42,10 +56,12 @@ class CameraController:
 
         self.camera.contrast = value
 
-    def __enter__(self):
-        self.camera = PiCamera(resolution=self.resolution, framerate=self.framerate)
-        return self
+    def get_data(self):
+        now = time.time()
 
-    def __exit__(self, type, value, traceback):
-        self.camera.close()
-        self.camera = None
+        return [
+            (now, "previewing", self.preview),
+            (now, "recording", self.record),
+            (now, "brightness", self.camera.brightness),
+            (now, "contrast", self.camera.contrast)
+        ]
