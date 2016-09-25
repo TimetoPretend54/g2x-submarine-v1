@@ -1,25 +1,28 @@
 import sqlite3
 import time
 
-
 class SQLiteLogger:
-    def __init__(self):
-        self.dbfile = "test.db"
-        create_table = True
+    def __init__(self, filename="test.db"):
+        self.filename = filename
+        self.connection = None
+
+    def __enter__(self):
 
         try:
-            with open(self.dbfile):
-                create_table = False
+            with open(self.filename):
+                self.connection = sqlite3.connect(self.filename)
         except IOError:
-            pass
-
-        self.connection = sqlite3.connect(self.dbfile)
-
-        if create_table:
+            self.connection = sqlite3.connect(self.filename)
             cursor = self.connection.cursor()
             cursor.execute('''CREATE TABLE readings
                               (date real, device text, property text, value real)''')
             self.connection.commit()
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.connection.close()
+        self.connection = None
 
     def log(self, device, property, value):
         now = time.time()
@@ -28,7 +31,3 @@ class SQLiteLogger:
         cursor = self.connection.cursor()
         cursor.execute("INSERT INTO readings VALUES(?,?,?,?)", values)
         self.connection.commit()
-
-
-    def close(self):
-        self.connection.close()
