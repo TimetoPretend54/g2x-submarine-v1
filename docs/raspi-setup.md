@@ -71,6 +71,12 @@ Suggested configuration and software for Raspberry Pi 3
         export TERM=screen-256color
     fi
     ```
+- Install Adafruit Python PCA9685 (Servo/PWM)
+    ```
+    git clone https://github.com/adafruit/Adafruit_Python_PCA9685.git
+    cd Adafruit_Python_PCA9685
+    sudo python setup.py install
+    ```
 
 ## git
 
