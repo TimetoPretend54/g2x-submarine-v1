@@ -4,7 +4,7 @@ from Sensor import SenseController
 from DataLogger import ScreenLogger
 import time
 
-with SenseController() as sense_hat, ScreenLogger as logger:
+with SenseController() as sense_hat, ScreenLogger() as logger:
     sense_hat.show_message("ON")
 
     for _ in range(10):
