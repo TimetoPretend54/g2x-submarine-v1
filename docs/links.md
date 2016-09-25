@@ -39,3 +39,7 @@
 # SD Cards
 
 - [SD Card Comparison](http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-microsd-card)
+
+# USB to RS485
+
+- [CoolGear](http://www.coolgear.com/product/usb-to-optical-isolated-rs-422485-industrial-adapter)
