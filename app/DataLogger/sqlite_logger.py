@@ -3,12 +3,11 @@ import time
 
 
 class SQLiteLogger:
-    def __init__(self, filename="test.db"):
+    def __init__(self, filename="g2x.db"):
         self.filename = filename
         self.connection = None
 
     def __enter__(self):
-
         try:
             with open(self.filename):
                 self.connection = sqlite3.connect(self.filename)
