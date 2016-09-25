@@ -24,9 +24,10 @@ class SQLiteLogger:
         self.connection.close()
         self.connection = None
 
-    def log(self, device, property, value):
-        now = time.time()
-        values = (now, device, property, value)
+    def log(self, device, property, value, t=None):
+        if t is None:
+            t = time.time()
+        values = (t, device, property, value)
 
         cursor = self.connection.cursor()
         cursor.execute("INSERT INTO readings VALUES(?,?,?,?)", values)
