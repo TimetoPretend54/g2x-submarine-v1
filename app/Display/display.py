@@ -18,8 +18,11 @@ class Display:
 
     def show_properties(self, properties):
         self.clear()
-        print(self.title)
+        self.print(self.title)
         print()
 
         for k, v in properties.items():
-            print("{0}: {1}".format(k, v))
+            self.print("{0}: {1}".format(k, v))
+
+    def print(self, message):
+        print(message, end="\x0a\x0d")
