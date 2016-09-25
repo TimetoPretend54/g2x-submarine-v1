@@ -1,1 +1,2 @@
-from .SQLiteLogger import SQLiteLogger
+from .sqlite_logger import SQLiteLogger
+from .screen_logger import ScreenLogger

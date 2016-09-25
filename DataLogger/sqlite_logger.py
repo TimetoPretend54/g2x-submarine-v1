@@ -1,6 +1,7 @@
 import sqlite3
 import time
 
+
 class SQLiteLogger:
     def __init__(self, filename="test.db"):
         self.filename = filename
