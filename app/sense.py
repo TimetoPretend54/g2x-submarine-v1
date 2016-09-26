@@ -51,7 +51,7 @@ class Handler:
 
 with SenseController() as sensor, KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
     # setup display
-    display = Display("PiSense", "[r]ecord [q]uit")
+    display = Display(DEVICE, "[r]ecord [q]uit")
 
     # setup key handlers
     handler = Handler(display, logger, sensor)
