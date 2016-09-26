@@ -62,6 +62,8 @@ class CameraController:
             "recording",
             "brightness",
             "contrast",
+            "resolution",
+            "framerate"
         ]
 
     def get_data(self):
@@ -71,5 +73,7 @@ class CameraController:
             (now, "previewing", self.preview),
             (now, "recording", self.record),
             (now, "brightness", self.camera.brightness),
-            (now, "contrast", self.camera.contrast)
+            (now, "contrast", self.camera.contrast),
+            (now, "resolution", self.camera.resolution),
+            (now, "framerate", self.camera.framerate),
         ]
