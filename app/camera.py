@@ -5,45 +5,47 @@ from KeyDispatcher import KeyDispatcher
 from Display import Display
 from DataLogger import SQLiteLogger
 
+DEVICE = "PiCamera"
+
 
 class Handler:
     def __init__(self, logger, camera):
         self.logger = logger
         self.camera = camera
-        self.logger.log("PiCamera", "running", 1)
+        self.logger.log(DEVICE, "running", 1)
 
     def increase_brightness(self):
         self.camera.brightness += 1
-        self.logger.log("PiCamera", "brightness", self.camera.brightness)
+        self.logger.log(DEVICE, "brightness", self.camera.brightness)
         return True
 
     def decrease_brightness(self):
         self.camera.brightness -= 1
-        self.logger.log("PiCamera", "brightness", self.camera.brightness)
+        self.logger.log(DEVICE, "brightness", self.camera.brightness)
         return True
 
     def increase_contrast(self):
         self.camera.contrast += 1
-        self.logger.log("PiCamera", "contrast", self.camera.contrast)
+        self.logger.log(DEVICE, "contrast", self.camera.contrast)
         return True
 
     def decrease_contrast(self):
         self.camera.contrast -= 1
-        self.logger.log("PiCamera", "contrast", self.camera.contrast)
+        self.logger.log(DEVICE, "contrast", self.camera.contrast)
         return True
 
     def toggle_preview(self):
         self.camera.toggle_preview()
-        self.logger.log("PiCamera", "preview", self.camera.preview)
+        self.logger.log(DEVICE, "preview", self.camera.preview)
         return True
 
     def toggle_record(self):
         self.camera.toggle_record()
-        self.logger.log("PiCamera", "record", self.camera.record)
+        self.logger.log(DEVICE, "record", self.camera.record)
         return True
 
     def quit(self):
-        self.logger.log("PiCamera", "running", 0)
+        self.logger.log(DEVICE, "running", 0)
         return False
 
 
