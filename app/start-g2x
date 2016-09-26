@@ -10,6 +10,9 @@ if [ $? != 0 ]; then
     tmux new-window -n "pi-sense" -t "${TMUX_ENV}"
     tmux send-keys -t "${TMUX_ENV}:1.0" './sense.py' C-m
 
+    tmux new-window -n "pwm" -t "${TMUX_ENV}"
+    tmux send-keys -t "${TMUX_ENV}:2.0" './pwm.py' C-m
+
     tmux new-window -n "bash" -t "${TMUX_ENV}"
 
     tmux select-window -t "${TMUX_ENV}:0"
