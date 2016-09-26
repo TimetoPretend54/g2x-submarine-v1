@@ -4,9 +4,11 @@ from Sensor import SenseController
 from KeyDispatcher import KeyDispatcher
 from Display import Display
 from DataLogger import SQLiteLogger
+import time
 
 
 DEVICE = "PiSense"
+DELAY = 0.0
 
 
 class Handler:
@@ -47,3 +49,4 @@ with SenseController() as sensor, KeyDispatcher() as dispatcher, SQLiteLogger() 
                 break
         else:
             handler.read()
+            time.sleep(DELAY)
