@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+TMUX_ENV=g2x
+
+tmux has-session -t "${TMUX_ENV}"
+if [ $? != 0 ]; then
+    tmux new-session -s "${TMUX_ENV}" -n camera -d
+    tmux send-keys -t "${TMUX_ENV}:0.0" './camera.py' C-m
+
+    tmux new-window -n "pi-sense" -t "${TMUX_ENV}"
+    tmux send-keys -t "${TMUX_ENV}:1.0" './sense.py' C-m
+
+    tmux new-window -n "bash" -t "${TMUX_ENV}"
+
+    tmux select-window -t "${TMUX_ENV}:0"
+fi
+
+tmux attach -t "${TMUX_ENV}"
