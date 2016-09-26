@@ -1,6 +1,8 @@
 import tty
 import sys
 import termios
+import select
+
 
 class KeyDispatcher:
     def __init__(self):
@@ -20,6 +22,9 @@ class KeyDispatcher:
             return method()
         else:
             return True
+
+    def can_process_key(self):
+        return select.select([sys.stdin], [], [], 0.0)[0]
 
     def process_key(self):
         key = sys.stdin.read(1)[0]
