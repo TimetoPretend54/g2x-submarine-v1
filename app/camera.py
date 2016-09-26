@@ -53,7 +53,7 @@ def update(display, camera):
     for item in camera.get_data():
         values[item[1]] = item[2]
 
-    display.show_properties(values)
+    display.show_properties(values, camera.get_properties())
 
 
 with CameraController() as camera, KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
