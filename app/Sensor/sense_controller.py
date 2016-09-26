@@ -1,6 +1,7 @@
 from sense_hat import SenseHat
 import time
 
+
 class SenseController:
     def __init__(self):
         self.sense = SenseHat()
@@ -15,6 +16,23 @@ class SenseController:
 
     def clear(self):
         self.sense.clear()
+
+    def get_properties(self):
+        return [
+            "humidity",
+            "temperature_from_humidity",
+            "temperature_from_pressure",
+            "pressure",
+            "orientation.pitch",
+            "orientation.roll",
+            "orientation.yaw",
+            "compass.x",
+            "compass.y",
+            "compass.z",
+            "accelerometer.x",
+            "accelerometer.y",
+            "accelerometer.z"
+        ]
 
     def get_data(self):
         orientation_time = time.time()
