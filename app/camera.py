@@ -71,7 +71,7 @@ with CameraController() as camera, KeyDispatcher() as dispatcher, SQLiteLogger()
     dispatcher.add("q", handler, "quit")
 
     # setup display and start processing key presses
-    display = Display("Camera")
+    display = Display("Camera", "[-/=] brightness [_/+] contrast [p]review [r]ecord [q]uit")
 
     update(display, camera)
 
