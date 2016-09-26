@@ -4,25 +4,41 @@ from PWM import PWMController
 from KeyDispatcher import KeyDispatcher
 from Display import Display
 from DataLogger import SQLiteLogger
-import sys
 import time
 
 DEVICE = "PWM/Servo"
 
 
+class Device:
+    def __init__(self, name, channel, on, off):
+        self.name = name
+        self.channel = channel
+        self.on = on
+        self.off = off
+
+
 class Handler:
-    def __init__(self, logger, pwm, channel):
+    def __init__(self, logger, pwm):
         self.logger = logger
         self.pwm = pwm
-        self.channel = channel
-
+        self.devices = []
+        self.current_index = 0
         self.frequency = 60
-        self.on = 0
-        self.off = 512
         self.pwm.set_frequency(self.frequency)
-        self.pwm.set_pwm(self.channel, self.on, self.off)
-
         self.logger.log(DEVICE, "running", 1)
+
+    def add_device(self, name, channel, on, off):
+        device = Device(name, channel, on, off)
+        self.devices.append(device)
+        self.pwm.set_pwm(device.channel, device.on, device.off)
+
+    def previous_device(self):
+        self.current_index = (self.current_index - 1) % len(self.devices)
+        return True
+
+    def next_device(self):
+        self.current_index = (self.current_index + 1) % len(self.devices)
+        return True
 
     def decrease_frequency(self):
         if self.frequency > 40:
@@ -41,34 +57,42 @@ class Handler:
         return True
 
     def decrease_on(self):
-        if self.on > 0:
-            self.on -= 1
-            self.pwm.set_pwm(self.channel, self.on, self.off)
-            self.logger.log(DEVICE, "on", self.on)
+        device = self.devices[self.current_index]
+
+        if device.on > 0:
+            device.on -= 1
+            self.pwm.set_pwm(device.channel, device.on, device.off)
+            self.logger.log(device.name, "on", device.on)
 
         return True
 
     def increase_on(self):
-        if self.on < 4095:
-            self.on += 1
-            self.pwm.set_pwm(self.channel, self.on, self.off)
-            self.logger.log(DEVICE, "on", self.on)
+        device = self.devices[self.current_index]
+
+        if device.on < 4095:
+            device.on += 1
+            self.pwm.set_pwm(device.channel, device.on, device.off)
+            self.logger.log(device.name, "on", device.on)
 
         return True
 
     def decrease_off(self):
-        if self.off > 0:
-            self.off -= 1
-            self.pwm.set_pwm(self.channel, self.on, self.off)
-            self.logger.log(DEVICE, "off", self.off)
+        device = self.devices[self.current_index]
+
+        if device.off > 0:
+            device.off -= 1
+            self.pwm.set_pwm(device.channel, device.on, device.off)
+            self.logger.log(device.name, "off", device.off)
 
         return True
 
     def increase_off(self):
-        if self.off < 4095:
-            self.off += 1
-            self.pwm.set_pwm(self.channel, self.on, self.off)
-            self.logger.log(DEVICE, "off", self.off)
+        device = self.devices[self.current_index]
+
+        if device.off < 4095:
+            device.off += 1
+            self.pwm.set_pwm(device.channel, device.on, device.off)
+            self.logger.log(device.name, "off", device.off)
 
         return True
 
@@ -79,6 +103,7 @@ class Handler:
     def get_properties(self):
         return [
             "channel",
+            "name",
             "frequency",
             "on",
             "off"
@@ -86,12 +111,14 @@ class Handler:
 
     def get_data(self):
         now = time.time()
+        device = self.devices[self.current_index]
 
         return [
-            (now, "channel", self.channel),
+            (now, "channel", device.channel),
+            (now, "name", device.name),
             (now, "frequency", self.frequency),
-            (now, "on", self.on),
-            (now, "off", self.off)
+            (now, "on", device.on),
+            (now, "off", device.off)
         ]
 
 
@@ -104,18 +131,18 @@ def update(display, handler):
     display.show_properties(values, handler.get_properties())
 
 
-if len(sys.argv) == 2:
-    channel = int(sys.argv[1])
-else:
-    channel = 0
-
 with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
+    # setup PWM controller
     pwm = PWMController()
+    pwm.add_device("PWM Light", 0, 0, 512)
+    pwm.add_device("PWM Motor", 1, 0, 512)
 
     # setup key handlers
     # TODO: get name and channel from command-line
-    handler = Handler(logger, pwm, channel)
+    handler = Handler(logger, pwm)
 
+    dispatcher.add("p", handler, "previous_device")
+    dispatcher.add("n", handler, "next_device")
     dispatcher.add("[", handler, "decrease_frequency")
     dispatcher.add("]", handler, "increase_frequency")
     dispatcher.add("_", handler, "decrease_on")
@@ -125,7 +152,7 @@ with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
     dispatcher.add("q", handler, "quit")
 
     # setup display and start processing key presses
-    display = Display(DEVICE, "[_/+] start [-/=] end [[/]] frequency [q]uit")
+    display = Display(DEVICE, "[p]revious [n]ext [_/+] start [-/=] end [[/]] frequency [q]uit")
 
     update(display, handler)
 
