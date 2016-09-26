@@ -56,6 +56,14 @@ class CameraController:
 
         self.camera.contrast = value
 
+    def get_properties(self):
+        return [
+            "previewing",
+            "recording",
+            "brightness",
+            "contrast",
+        ]
+
     def get_data(self):
         now = time.time()
 
