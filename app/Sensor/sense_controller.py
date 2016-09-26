@@ -20,9 +20,9 @@ class SenseController:
     def get_properties(self):
         return [
             "humidity",
+            "pressure",
             "temperature_from_humidity",
             "temperature_from_pressure",
-            "pressure",
             "orientation.pitch",
             "orientation.roll",
             "orientation.yaw",
@@ -45,9 +45,9 @@ class SenseController:
         return [
             # Environmental sensors
             (time.time(), "humidity", self.sense.get_humidity()),
+            (time.time(), "pressure", self.sense.get_pressure()),
             (time.time(), "temperature_from_humidity", self.sense.get_temperature()),
             (time.time(), "temperature_from_pressure", self.sense.get_temperature_from_pressure()),
-            (time.time(), "pressure", self.sense.get_pressure()),
 
             # IMU sensors
             (orientation_time, "orientation.pitch", orientation['pitch']),
