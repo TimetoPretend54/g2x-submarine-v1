@@ -11,3 +11,5 @@
 - PWM/Server
 	- 40
 	- 70
+- Pressure Sensor
+	- 76
