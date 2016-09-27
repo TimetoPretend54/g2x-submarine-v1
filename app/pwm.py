@@ -134,12 +134,11 @@ def update(display, handler):
 with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
     # setup PWM controller
     pwm = PWMController()
-    pwm.add_device("PWM Light", 0, 0, 512)
-    pwm.add_device("PWM Motor", 1, 0, 512)
 
     # setup key handlers
-    # TODO: get name and channel from command-line
     handler = Handler(logger, pwm)
+    handler.add_device("PWM Light", 0, 0, 512)
+    handler.add_device("PWM Motor", 1, 0, 512)
 
     dispatcher.add("p", handler, "previous_device")
     dispatcher.add("n", handler, "next_device")
