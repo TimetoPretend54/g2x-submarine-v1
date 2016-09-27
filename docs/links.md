@@ -43,3 +43,10 @@
 # USB to RS485
 
 - [CoolGear](http://www.coolgear.com/product/usb-to-optical-isolated-rs-422485-industrial-adapter)
+
+# Blue Robotics Pressure Sense
+
+- [Pressure Sensor](https://www.bluerobotics.com/store/electronics/bar30-sensor-r1/)
+- [Raspi Code](https://github.com/ControlEverythingCommunity/MS5837-30BA01/blob/master/Python/MS5837_30BA01.py)
+- [Arduino Code](https://github.com/bluerobotics/BlueRobotics_MS5837_Library/blob/master/MS5837.cpp)
+
