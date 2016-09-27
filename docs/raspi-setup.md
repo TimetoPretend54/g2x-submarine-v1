@@ -101,6 +101,8 @@ Suggested configuration and software for Raspberry Pi 3
     - cmd-K
     - vnc://pi@192.168.0.1:5901
     - enter password
+- Auto-start
+    - [VNC](https://www.raspberrypi.org/documentation/remote-access/vnc/)
 
 ## Apple File Sharing
 
