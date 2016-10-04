@@ -50,3 +50,7 @@
 - [Raspi Code](https://github.com/ControlEverythingCommunity/MS5837-30BA01/blob/master/Python/MS5837_30BA01.py)
 - [Arduino Code](https://github.com/bluerobotics/BlueRobotics_MS5837_Library/blob/master/MS5837.cpp)
 
+# Lumen Subsea Light
+
+- [Blue Robotics](https://www.bluerobotics.com/store/electronics/lumen-light-r1/)
+- [Sample Code](http://docs.bluerobotics.com/lumen/#example-code)
