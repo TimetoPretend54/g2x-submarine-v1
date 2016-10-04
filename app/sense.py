@@ -26,10 +26,10 @@ class Handler:
             for reading in self.sensor.get_data():
                 values[reading[1]] = reading[2]
                 self.logger.log(DEVICE, reading[1], reading[2], reading[0])
-            display.show_properties(values, self.sensor.get_properties())
+            self.display.show_properties(values, self.sensor.get_properties())
         else:
             values["recording"] = False
-            display.show_properties(values)
+            self.display.show_properties(values)
 
         return True
 
