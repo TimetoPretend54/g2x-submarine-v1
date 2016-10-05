@@ -7,7 +7,7 @@ from DataLogger import SQLiteLogger
 import time
 
 DEVICE = "Pressure/Temperature"
-DELAY = 0.25
+DELAY = 0.5
 
 
 class Handler:
