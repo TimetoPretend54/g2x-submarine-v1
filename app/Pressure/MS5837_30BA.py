@@ -3,6 +3,7 @@
 #   https://github.com/ControlEverythingCommunity/MS5837-30BA01/blob/master/Python/MS5837_30BA01.py
 
 import smbus
+import math
 import time
 
 ADDRESS = 0x76
@@ -107,15 +108,21 @@ class MS5837_30BA:
         celsius    = TEMP / 100.0
         fahrenheit = celsius * 1.8 + 32
 
-        return (pressure, celsius, fahrenheit)
+        fluid_density = 1029
+        depth = ((pressure * 100) - 101300) / (fluid_density * 9.80665)
+        altitude = (1 - math.pow(pressure / 1013.25, 0.190284)) * 145366.45 * 0.3048
+
+        return (pressure, celsius, fahrenheit, depth, altitude)
 
     def get_properties(self):
         return [
             "pressure_raw",
             "temperature_raw",
             "mbars",
-            "celcius",
-            "fahrenheit"
+            "celsius",
+            "fahrenheit",
+            "depth",
+            "altitude"
         ]
 
     def get_data(self):
@@ -124,12 +131,14 @@ class MS5837_30BA:
         temperature_time = time.time()
         temperature_raw = self.temperature_raw
         values_time = time.time()
-        pressure, celcius, fahrenheit = self.calculate_values(pressure_raw, temperature_raw)
+        pressure, celsius, fahrenheit, depth, altitude = self.calculate_values(pressure_raw, temperature_raw)
 
         return [
             (pressure_time, "pressure_raw", pressure_raw),
             (temperature_time, "temperature_raw", temperature_raw),
             (values_time, "mbars", pressure),
-            (values_time, "celcius", celcius),
-            (values_time, "fahrenheit", fahrenheit)
+            (values_time, "celsius", celsius),
+            (values_time, "fahrenheit", fahrenheit),
+            (values_time, "depth", depth),
+            (values_time, "altitude", altitude),
         ]
