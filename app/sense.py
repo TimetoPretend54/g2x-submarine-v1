@@ -20,13 +20,15 @@ class Handler:
         self.logger.log(DEVICE, "running", 1)
 
     def read(self):
+        properties = []
         values = {}
 
         if self.recording:
             for reading in self.sensor.get_data():
+                properties.append(reading[1])
                 values[reading[1]] = reading[2]
                 self.logger.log(DEVICE, reading[1], reading[2], reading[0])
-            self.display.show_properties(values, self.sensor.get_properties())
+            self.display.show_properties(values, properties)
         else:
             values["recording"] = False
             self.display.show_properties(values)
@@ -67,3 +69,5 @@ with SenseController() as sensor, KeyDispatcher() as dispatcher, SQLiteLogger() 
         else:
             handler.read()
             time.sleep(DELAY)
+
+    display.clear()

@@ -114,17 +114,6 @@ class MS5837_30BA:
 
         return (pressure, celsius, fahrenheit, depth, altitude)
 
-    def get_properties(self):
-        return [
-            "pressure_raw",
-            "temperature_raw",
-            "mbars",
-            "celsius",
-            "fahrenheit",
-            "depth",
-            "altitude"
-        ]
-
     def get_data(self):
         pressure_time = time.time()
         pressure_raw = self.pressure_raw

@@ -87,18 +87,6 @@ class Handler:
 
         return False
 
-    def get_properties(self):
-        return [
-            "channel",
-            "name",
-            "frequency",
-            "on",
-            "off",
-            "on_duration",
-            "off_duration",
-            "duty_cycle"
-        ]
-
     def get_data(self):
         now = time.time()
         device = self.pwm.current_device
@@ -116,12 +104,14 @@ class Handler:
 
 
 def update(display, handler):
+    properties = []
     values = {}
 
     for item in handler.get_data():
+        properties.append(item[1])
         values[item[1]] = item[2]
 
-    display.show_properties(values, handler.get_properties())
+    display.show_properties(values, properties)
 
 
 with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
@@ -152,3 +142,5 @@ with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
 
     while dispatcher.process_key():
         update(display, handler)
+
+    display.clear()

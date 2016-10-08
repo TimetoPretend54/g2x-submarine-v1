@@ -56,16 +56,6 @@ class CameraController:
 
         self.camera.contrast = value
 
-    def get_properties(self):
-        return [
-            "previewing",
-            "recording",
-            "brightness",
-            "contrast",
-            "resolution",
-            "framerate"
-        ]
-
     def get_data(self):
         now = time.time()
 
@@ -76,4 +66,18 @@ class CameraController:
             (now, "contrast", self.camera.contrast),
             (now, "resolution", self.camera.resolution),
             (now, "framerate", self.camera.framerate),
+            (now, "iso", self.camera.iso),
+            (now, "shutter_speed", self.camera.shutter_speed),
+            (now, "video_stabilization", self.camera.video_stabilization),
+
+            (now, "analog_gain", self.camera.analog_gain),
+            # (now, "awb_gains", self.camera.awb_gains),
+            (now, "awb_mode", self.camera.awb_mode),
+            (now, "digital_gain", self.camera.digital_gain),
+            (now, "exposure_comp", self.camera.exposure_compensation),
+            (now, "exposure_mode", self.camera.exposure_mode),
+            (now, "exposure_speed", self.camera.exposure_speed),
+            (now, "meter_mode", self.camera.meter_mode),
+            (now, "sharpness", self.camera.sharpness),
+            (now, "video_denoise", self.camera.video_denoise),
         ]

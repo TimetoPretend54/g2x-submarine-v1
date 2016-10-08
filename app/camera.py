@@ -50,12 +50,14 @@ class Handler:
 
 
 def update(display, camera):
+    properties = []
     values = {}
 
     for item in camera.get_data():
+        properties.append(item[1])
         values[item[1]] = item[2]
 
-    display.show_properties(values, camera.get_properties())
+    display.show_properties(values, properties)
 
 
 with CameraController() as camera, KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
@@ -77,3 +79,5 @@ with CameraController() as camera, KeyDispatcher() as dispatcher, SQLiteLogger()
 
     while dispatcher.process_key():
         update(display, camera)
+
+    display.clear()

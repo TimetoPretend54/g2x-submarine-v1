@@ -17,23 +17,6 @@ class SenseController:
     def clear(self):
         self.sense.clear()
 
-    def get_properties(self):
-        return [
-            "humidity",
-            "pressure",
-            "temperature_from_humidity",
-            "temperature_from_pressure",
-            "orientation.pitch",
-            "orientation.roll",
-            "orientation.yaw",
-            "compass.x",
-            "compass.y",
-            "compass.z",
-            "accelerometer.x",
-            "accelerometer.y",
-            "accelerometer.z"
-        ]
-
     def get_data(self):
         orientation_time = time.time()
         orientation = self.sense.get_orientation_degrees()
