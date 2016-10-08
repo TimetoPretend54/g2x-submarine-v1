@@ -42,11 +42,14 @@ class Handler:
         self.devices = []
         self.current_index = 0
         self.logger.log(DEVICE, "running", 1)
+        self.logger.log(DEVICE, "frequency", self.pwm.frequency)
 
     def add_device(self, name, channel, on, off):
         device = Device(name, channel, on, off)
         self.devices.append(device)
         self.pwm.set_pwm(device.channel, device.on, device.off)
+        self.logger.log(device.name, "on", device.on)
+        self.logger.log(device.name, "off", device.off)
 
     def previous_device(self):
         self.current_index = (self.current_index - 1) % len(self.devices)
