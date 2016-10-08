@@ -16,15 +16,31 @@ class Device:
         self.on = on
         self.off = off
 
+    @property
+    def duty_cycle(self):
+        on_duration = abs(self.off - self.on)
+
+        return round(100.0 * on_duration / 4096, 2)
+
+    def on_duration(self, freq):
+        one_cycle = 1.0 / freq
+        on_percent = abs(self.off - self.on) / 4096.0
+
+        return round(1000000 * one_cycle * on_percent, 2)
+
+    def off_duration(self, freq):
+        one_cycle = 1.0 / freq
+        off_percent = 1.0 - (abs(self.off - self.on) / 4096.0)
+
+        return round(1000000 * one_cycle * off_percent, 2)
+
 
 class Handler:
-    def __init__(self, logger, pwm):
+    def __init__(self, logger):
         self.logger = logger
-        self.pwm = pwm
+        self.pwm = PWMController()
         self.devices = []
         self.current_index = 0
-        self.frequency = 60
-        self.pwm.set_frequency(self.frequency)
         self.logger.log(DEVICE, "running", 1)
 
     def add_device(self, name, channel, on, off):
@@ -41,18 +57,16 @@ class Handler:
         return True
 
     def decrease_frequency(self):
-        if self.frequency > 40:
-            self.frequency -= 1
-            self.pwm.set_frequency(self.frequency)
-            self.logger.log(DEVICE, "frequency", self.frequency)
+        if self.pwm.frequency > 40:
+            self.pwm.frequency -= 1
+            self.logger.log(DEVICE, "frequency", self.pwm.frequency)
 
         return True
 
     def increase_frequency(self):
-        if self.frequency < 1000:
-            self.frequency += 1
-            self.pwm.set_frequency(self.frequency)
-            self.logger.log(DEVICE, "frequency", self.frequency)
+        if self.pwm.frequency < 1000:
+            self.pwm.frequency += 1
+            self.logger.log(DEVICE, "frequency", self.pwm.frequency)
 
         return True
 
@@ -106,19 +120,26 @@ class Handler:
             "name",
             "frequency",
             "on",
-            "off"
+            "off",
+            "on_duration",
+            "off_duration",
+            "duty_cycle"
         ]
 
     def get_data(self):
         now = time.time()
         device = self.devices[self.current_index]
+        frequency = self.pwm.frequency
 
         return [
             (now, "channel", device.channel),
             (now, "name", device.name),
-            (now, "frequency", self.frequency),
+            (now, "frequency", frequency),
             (now, "on", device.on),
-            (now, "off", device.off)
+            (now, "off", device.off),
+            (now, "on_duration", device.on_duration(frequency)),
+            (now, "off_duration", device.off_duration(frequency)),
+            (now, "duty_cycle", device.duty_cycle)
         ]
 
 
@@ -132,13 +153,12 @@ def update(display, handler):
 
 
 with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
-    # setup PWM controller
-    pwm = PWMController()
-
     # setup key handlers
-    handler = Handler(logger, pwm)
-    handler.add_device("PWM Light", 0, 0, 512)
-    handler.add_device("PWM Motor", 1, 0, 512)
+    handler = Handler(logger)
+
+    # [1000us,1900us] = [246,467] @ 60Hz
+    handler.add_device("PWM Light", 0, 0, 467)
+    handler.add_device("PWM Thruster", 1, 0, 512)
 
     dispatcher.add("p", handler, "previous_device")
     dispatcher.add("n", handler, "next_device")
@@ -151,7 +171,10 @@ with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
     dispatcher.add("q", handler, "quit")
 
     # setup display and start processing key presses
-    display = Display(DEVICE, "[p]revious [n]ext [_/+] start [-/=] end [[/]] frequency [q]uit")
+    display = Display(
+        DEVICE,
+        "[p]revious [n]ext [_/+] start [-/=] end [[/]] frequency [q]uit"
+    )
 
     update(display, handler)
 

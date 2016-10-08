@@ -4,12 +4,18 @@ import Adafruit_PCA9685
 class PWMController:
     def __init__(self):
         self.pwm = Adafruit_PCA9685.PCA9685()
+        self.frequency = 60
 
-    def set_frequency(self, freq):
+    @property
+    def frequency(self):
+        return self._frequency
+
+    @frequency.setter
+    def frequency(self, freq):
         # [40,1000] comes from Adafruit docs
-        freq = max(40, min(freq, 1000))
+        self._frequency = max(40, min(freq, 1000))
 
-        self.pwm.set_pwm_freq(freq)
+        self.pwm.set_pwm_freq(self._frequency)
 
     # on/off are in ticks (based on freq)
     def set_pwm(self, channel, on, off):
