@@ -9,54 +9,27 @@ import time
 DEVICE = "PWM/Servo"
 
 
-class Device:
-    def __init__(self, name, channel, on, off):
-        self.name = name
-        self.channel = channel
-        self.on = on
-        self.off = off
-
-    @property
-    def duty_cycle(self):
-        on_duration = abs(self.off - self.on)
-
-        return round(100.0 * on_duration / 4096, 2)
-
-    def on_duration(self, freq):
-        one_cycle = 1.0 / freq
-        on_percent = abs(self.off - self.on) / 4096.0
-
-        return round(1000000 * one_cycle * on_percent, 2)
-
-    def off_duration(self, freq):
-        one_cycle = 1.0 / freq
-        off_percent = 1.0 - (abs(self.off - self.on) / 4096.0)
-
-        return round(1000000 * one_cycle * off_percent, 2)
-
-
 class Handler:
     def __init__(self, logger):
         self.logger = logger
         self.pwm = PWMController()
-        self.devices = []
-        self.current_index = 0
         self.logger.log(DEVICE, "running", 1)
         self.logger.log(DEVICE, "frequency", self.pwm.frequency)
 
     def add_device(self, name, channel, on, off):
-        device = Device(name, channel, on, off)
-        self.devices.append(device)
-        self.pwm.set_pwm(device.channel, device.on, device.off)
+        device = self.pwm.add_device(name, channel, on, off)
+
         self.logger.log(device.name, "on", device.on)
         self.logger.log(device.name, "off", device.off)
 
     def previous_device(self):
-        self.current_index = (self.current_index - 1) % len(self.devices)
+        self.pwm.previous_device()
+
         return True
 
     def next_device(self):
-        self.current_index = (self.current_index + 1) % len(self.devices)
+        self.pwm.next_device()
+
         return True
 
     def decrease_frequency(self):
@@ -74,47 +47,44 @@ class Handler:
         return True
 
     def decrease_on(self):
-        device = self.devices[self.current_index]
+        device = self.pwm.current_device
 
-        if device.on > 0:
+        if device is not None and device.on > 0:
             device.on -= 1
-            self.pwm.set_pwm(device.channel, device.on, device.off)
             self.logger.log(device.name, "on", device.on)
 
         return True
 
     def increase_on(self):
-        device = self.devices[self.current_index]
+        device = self.pwm.current_device
 
-        if device.on < 4095:
+        if device is not None and device.on < 4095:
             device.on += 1
-            self.pwm.set_pwm(device.channel, device.on, device.off)
             self.logger.log(device.name, "on", device.on)
 
         return True
 
     def decrease_off(self):
-        device = self.devices[self.current_index]
+        device = self.pwm.current_device
 
-        if device.off > 0:
+        if device is not None and device.off > 0:
             device.off -= 1
-            self.pwm.set_pwm(device.channel, device.on, device.off)
             self.logger.log(device.name, "off", device.off)
 
         return True
 
     def increase_off(self):
-        device = self.devices[self.current_index]
+        device = self.pwm.current_device
 
-        if device.off < 4095:
+        if device is not None and device.off < 4095:
             device.off += 1
-            self.pwm.set_pwm(device.channel, device.on, device.off)
             self.logger.log(device.name, "off", device.off)
 
         return True
 
     def quit(self):
         self.logger.log(DEVICE, "running", 0)
+
         return False
 
     def get_properties(self):
@@ -131,17 +101,16 @@ class Handler:
 
     def get_data(self):
         now = time.time()
-        device = self.devices[self.current_index]
-        frequency = self.pwm.frequency
+        device = self.pwm.current_device
 
         return [
             (now, "channel", device.channel),
             (now, "name", device.name),
-            (now, "frequency", frequency),
+            (now, "frequency", self.pwm.frequency),
             (now, "on", device.on),
             (now, "off", device.off),
-            (now, "on_duration", device.on_duration(frequency)),
-            (now, "off_duration", device.off_duration(frequency)),
+            (now, "on_duration", device.on_duration),
+            (now, "off_duration", device.off_duration),
             (now, "duty_cycle", device.duty_cycle)
         ]
 
