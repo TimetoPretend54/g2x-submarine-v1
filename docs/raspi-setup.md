@@ -112,6 +112,13 @@ Suggested configuration and software for Raspberry Pi 3
     - Edit last line, if necessary
 - `sudo /etc/init.d/netatalk start`
 
+## Node
+
+The following removes the default installation of node and npm, then installs 'n' which can be used to manage the current installed version of node on the Raspberry Pi
+
+- `sudo apt-get remove nodered nodejs nodejs-legacy npm`
+- `curl -L https://git.io/n-install | bash`
+
 
 # mac os
 
