@@ -119,7 +119,7 @@ with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
     handler = Handler(logger)
 
     # [1100µs,1900µs] = [271,467] @ 60Hz
-    handler.add_device("PWM Light", 2, 0, 467)
+    handler.add_device("PWM Light", 2, 0, 320)
     handler.add_device("PWM Thruster", 1, 0, 271)
 
     dispatcher.add("p", handler, "previous_device")
