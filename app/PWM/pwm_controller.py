@@ -58,6 +58,7 @@ class PWMController:
     def __init__(self):
         self.pwm = Adafruit_PCA9685.PCA9685()
         self._frequency = 60
+        self.pwm.set_pwm_freq(self._frequency)
         self.devices = []
         self.current_device_index = 0
 
