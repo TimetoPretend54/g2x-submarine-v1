@@ -5,8 +5,12 @@ from KeyDispatcher import KeyDispatcher
 from Display import Display
 from DataLogger import SQLiteLogger
 import time
+import signal
+import sys
 
 DEVICE = "PWM/Servo"
+SMALL_ADJUST = 1
+LARGE_ADJUST = 5
 
 
 class Handler:
@@ -33,16 +37,16 @@ class Handler:
         return True
 
     def decrease_off_small(self):
-        return self.adjust_off(-1)
+        return self.adjust_off(-SMALL_ADJUST)
 
     def increase_off_small(self):
-        return self.adjust_off(1)
+        return self.adjust_off(SMALL_ADJUST)
 
     def decrease_off_large(self):
-        return self.adjust_off(-5)
+        return self.adjust_off(-LARGE_ADJUST)
 
     def increase_off_large(self):
-        return self.adjust_off(5)
+        return self.adjust_off(LARGE_ADJUST)
 
     def adjust_off(self, delta):
         device = self.pwm.current_device
@@ -63,9 +67,12 @@ class Handler:
         return True
 
     def quit(self):
+        # reset all devices which should (hopefully) turn them off
         for device in self.pwm.devices:
+            current_value = device.off
             device.reset()
-            self.logger.log(device.name, "off", device.off)
+            if current_value != device.off:
+                self.logger.log(device.name, "off", device.off)
 
         self.logger.log(DEVICE, "running", 0)
 
@@ -97,8 +104,19 @@ def update(display, handler):
 
 
 with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
-    # setup key handlers
+    # create key handler
     handler = Handler(logger)
+
+    # setup signal handlers
+    def clean_exit(signal_number, stack_frame):
+        logger.log(DEVICE, "captured signal", signal_number)
+        handler.quit()
+        logger.close()
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, clean_exit)
+    # signal.signal(signal.SIGINT, clean_exit)
+    # signal.signal(signal.SIGKILL, clean_exit)
 
     # [1100µs,1900µs] = [271,467] @ 60Hz
     handler.add_device("PWM Light", 2, 0, 320)
