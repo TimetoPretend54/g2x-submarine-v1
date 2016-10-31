@@ -8,6 +8,13 @@ class SQLiteLogger:
         self.connection = None
 
     def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
+    def open(self):
         try:
             with open(self.filename):
                 self.connection = sqlite3.connect(self.filename)
@@ -18,17 +25,17 @@ class SQLiteLogger:
                               (date real, device text, property text, value real)''')
             self.connection.commit()
 
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.connection.close()
-        self.connection = None
+    def close(self):
+        if self.connection is not None:
+            self.connection.close()
+            self.connection = None
 
     def log(self, device, property, value, t=None):
-        if t is None:
-            t = time.time()
-        values = (t, device, property, value)
+        if self.connection is not None:
+            if t is None:
+                t = time.time()
+            values = (t, device, property, value)
 
-        cursor = self.connection.cursor()
-        cursor.execute("INSERT INTO readings VALUES(?,?,?,?)", values)
-        self.connection.commit()
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO readings VALUES(?,?,?,?)", values)
+            self.connection.commit()
