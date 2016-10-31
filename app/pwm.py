@@ -32,57 +32,41 @@ class Handler:
 
         return True
 
-    def decrease_frequency(self):
-        if self.pwm.frequency > 40:
-            self.pwm.frequency -= 1
-            self.logger.log(DEVICE, "frequency", self.pwm.frequency)
+    def decrease_off_small(self):
+        return self.adjust_off(-1)
 
-        return True
+    def increase_off_small(self):
+        return self.adjust_off(1)
 
-    def increase_frequency(self):
-        if self.pwm.frequency < 1000:
-            self.pwm.frequency += 1
-            self.logger.log(DEVICE, "frequency", self.pwm.frequency)
+    def decrease_off_large(self):
+        return self.adjust_off(-5)
 
-        return True
+    def increase_off_large(self):
+        return self.adjust_off(5)
 
-    def decrease_on(self):
+    def adjust_off(self, delta):
         device = self.pwm.current_device
+        new_value = device.off + delta
 
-        if device is not None and device.on > 0:
-            device.on -= 1
-            self.logger.log(device.name, "on", device.on)
-
-        return True
-
-    def increase_on(self):
-        device = self.pwm.current_device
-
-        if device is not None and device.on < 4095:
-            device.on += 1
-            self.logger.log(device.name, "on", device.on)
-
-        return True
-
-    def decrease_off(self):
-        device = self.pwm.current_device
-
-        if device is not None and device.off > 0:
-            device.off -= 1
+        if device is not None and 0 <= new_value < 4096:
+            device.off = new_value
             self.logger.log(device.name, "off", device.off)
 
         return True
 
-    def increase_off(self):
+    def reset(self):
         device = self.pwm.current_device
 
-        if device is not None and device.off < 4095:
-            device.off += 1
-            self.logger.log(device.name, "off", device.off)
+        if device is not None:
+            device.reset()
 
         return True
 
     def quit(self):
+        for device in self.pwm.devices:
+            device.reset()
+            self.logger.log(device.name, "off", device.off)
+
         self.logger.log(DEVICE, "running", 0)
 
         return False
@@ -94,9 +78,7 @@ class Handler:
         return [
             (now, "channel", device.channel),
             (now, "name", device.name),
-            (now, "frequency", self.pwm.frequency),
-            (now, "on", device.on),
-            (now, "off", device.off),
+            (now, "ticks", device.off),
             (now, "on_duration", device.on_duration),
             (now, "off_duration", device.off_duration),
             (now, "duty_cycle", device.duty_cycle)
@@ -124,18 +106,17 @@ with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
 
     dispatcher.add("p", handler, "previous_device")
     dispatcher.add("n", handler, "next_device")
-    dispatcher.add("[", handler, "decrease_frequency")
-    dispatcher.add("]", handler, "increase_frequency")
-    dispatcher.add("_", handler, "decrease_on")
-    dispatcher.add("+", handler, "increase_on")
-    dispatcher.add("-", handler, "decrease_off")
-    dispatcher.add("=", handler, "increase_off")
+    dispatcher.add("-", handler, "decrease_off_small")
+    dispatcher.add("=", handler, "increase_off_small")
+    dispatcher.add("_", handler, "decrease_off_large")
+    dispatcher.add("+", handler, "increase_off_large")
+    dispatcher.add("r", handler, "reset")
     dispatcher.add("q", handler, "quit")
 
     # setup display and start processing key presses
     display = Display(
         DEVICE,
-        "[p]revious [n]ext [_/+] start [-/=] end [[/]] frequency [q]uit"
+        "[p]revious [n]ext [-/=] increment 1 [_/+] increment 5 [r]eset [q]uit"
     )
 
     update(display, handler)
