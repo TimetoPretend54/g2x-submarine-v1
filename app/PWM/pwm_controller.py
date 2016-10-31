@@ -8,6 +8,8 @@ class Device:
         self.channel = channel
         self._on = on
         self._off = off
+        self.initial_on = on
+        self.initial_off = off
 
     @property
     def on(self):
@@ -52,6 +54,10 @@ class Device:
         off_percent = 1.0 - (abs(self.off - self.on) / 4096.0)
 
         return round(1000000 * one_cycle * off_percent, 2)
+
+    def reset(self):
+        self.on = self.initial_on
+        self.off = self.initial_off
 
 
 class PWMController:
