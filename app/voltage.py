@@ -3,13 +3,8 @@
 from KeyDispatcher import KeyDispatcher
 from Display import Display
 from DataLogger import SQLiteLogger
+from Voltage import Voltage
 import time
-
-# TODO: move to a separate class
-import smbus
-ADDRESS = 4
-CMD_READ_ANALOG = 1
-# TODO: end
 
 DEVICE = "Arduino Nano"
 DELAY = 1
@@ -20,7 +15,7 @@ class Handler:
         self.display = display
         self.logger = logger
         self.recording = False
-        self.bus = smbus.SMBus(1)
+        self.sensor = Voltage()
 
     def record(self):
         self.recording = not self.recording
@@ -37,10 +32,10 @@ class Handler:
         values = {}
 
         if self.recording:
-            voltage = self.bus.read_word_data(ADDRESS, CMD_READ_ANALOG)
-            properties.append("voltage")
-            values["voltage"] = voltage
-            self.logger.log(DEVICE, "voltage", voltage, time.time())
+            for reading in self.sensor.get_data():
+                properties.append(reading[1])
+                values[reading[1]] = reading[2]
+                self.logger.log(DEVICE, reading[1], reading[2], reading[0])
             self.display.show_properties(values, properties)
         else:
             values["recording"] = False
