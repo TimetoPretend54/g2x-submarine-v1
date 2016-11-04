@@ -13,7 +13,7 @@
 	- 70
 - Pressure Sensor
 	- 76
-
-# PWM
-
-- Light cuts off around 0-on, 320-off
+- Arduino Nano
+	- 4
+- Real-time Clock
+	- 68? (UU)
