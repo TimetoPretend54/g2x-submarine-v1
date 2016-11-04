@@ -16,6 +16,9 @@ if [ $? != 0 ]; then
     tmux new-window -n "i2c" -t "${TMUX_ENV}"
     tmux send-keys -t "${TMUX_ENV}:3.0" './pressure.py' C-m
 
+    tmux new-window -n "nano" -t "${TMUX_ENV}"
+    tmux send-keys -t "${TMUX_ENV}:4.0" './voltage.py' C-m
+
     tmux new-window -n "bash" -t "${TMUX_ENV}"
 
     tmux select-window -t "${TMUX_ENV}:0"
