@@ -63,3 +63,4 @@
 
 - [AttoPilot Voltage and Current Sensor](https://www.sparkfun.com/products/10643)
 - [acs758](http://henrysbench.capnfatz.com/henrys-bench/arduino-current-measurements/acs758-arduino-current-sensor-tutorial/)
+- [Measuring current with an Arduino](http://www.vwlowen.co.uk/arduino/current/current.htm)
