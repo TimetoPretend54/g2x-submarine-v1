@@ -8,7 +8,7 @@ import time
 
 
 DEVICE = "PiSense"
-DELAY = 0.25
+DELAY = 1  # in seconds
 
 
 class Handler:
@@ -51,7 +51,7 @@ class Handler:
         return False
 
 
-with SenseController() as sensor, KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
+with SenseController() as sensor, KeyDispatcher() as dispatcher, SQLiteLogger(filename="g2x-sense.db") as logger:
     # setup display
     display = Display(DEVICE, "[r]ecord [q]uit")
 

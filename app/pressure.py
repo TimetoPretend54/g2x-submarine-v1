@@ -7,7 +7,7 @@ from DataLogger import SQLiteLogger
 import time
 
 DEVICE = "Pressure/Temperature"
-DELAY = 0.5
+DELAY = 1.0  # in seconds
 
 
 class Handler:
@@ -57,7 +57,7 @@ class Handler:
         return False
 
 
-with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
+with KeyDispatcher() as dispatcher, SQLiteLogger(filename="g2x-pressure.db") as logger:
     # setup display
     display = Display(DEVICE, "[r]ecord [q]uit")
 
