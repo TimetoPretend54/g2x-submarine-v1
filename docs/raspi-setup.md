@@ -119,6 +119,27 @@ The following removes the default installation of node and npm, then installs 'n
 - `sudo apt-get remove nodered nodejs nodejs-legacy npm`
 - `curl -L https://git.io/n-install | bash`
 
+## Rebuilding a corrupt sqlite3 database
+
+Within sqlite, do the following:
+
+```
+sqlite> .mode insert
+sqlite> .output mydb_export.sql
+sqlite> .dump
+sqlite> .exit
+```
+In a shell, do the following:
+
+```
+mv mydb.db mydb.db.orig
+sqlite3 mydb.db < mydb_export.sql
+```
+If you have indexes, do the following in sqlite:
+```
+sqlite> analyze;
+sqlite> .exit
+```
 
 # mac os
 
