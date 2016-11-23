@@ -7,7 +7,7 @@ from Voltage import Voltage
 import time
 
 DEVICE = "Arduino Nano"
-DELAY = 1
+DELAY = 1  # in seconds
 
 
 class Handler:
@@ -49,7 +49,7 @@ class Handler:
         return False
 
 
-with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
+with KeyDispatcher() as dispatcher, SQLiteLogger(filename="g2x-voltage.db") as logger:
     # setup display
     display = Display(DEVICE, "[r]ecord [q]uit")
 

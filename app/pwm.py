@@ -62,7 +62,13 @@ class Handler:
         device = self.pwm.current_device
 
         if device is not None:
+            on = device.on
+            off = device.off
             device.reset()
+            if device.on != on:
+                self.logger.log(device.name, "on", device.on)
+            if device.off != off:
+                self.logger.log(device.name, "off", device.off)
 
         return True
 
@@ -103,7 +109,7 @@ def update(display, handler):
     display.show_properties(values, properties)
 
 
-with KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
+with KeyDispatcher() as dispatcher, SQLiteLogger(filename="g2x-pwm.db") as logger:
     # create key handler
     handler = Handler(logger)
 

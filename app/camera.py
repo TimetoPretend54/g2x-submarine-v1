@@ -60,7 +60,7 @@ def update(display, camera):
     display.show_properties(values, properties)
 
 
-with CameraController() as camera, KeyDispatcher() as dispatcher, SQLiteLogger() as logger:
+with CameraController() as camera, KeyDispatcher() as dispatcher, SQLiteLogger(filename="g2x-camera.db") as logger:
     # setup key handlers
     handler = Handler(logger, camera)
 
