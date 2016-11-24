@@ -11,16 +11,22 @@ import pystache
 from PIL import Image
 import cairosvg
 
+from DataManager import DataManager
+
 
 class Data:
-    def __init__(self, secs_since_epoch):
+    def __init__(self, secs_since_epoch, depth_data):
         self.time = time.localtime(secs_since_epoch)
+        self.depth_data = depth_data
 
     def frame_date(self):
         return time.strftime("%B %d, %Y", self.time)
 
     def frame_time(self):
         return time.strftime("%I:%M:%S %p", self.time)
+
+    def frame_depth_data(self):
+        return self.depth_data
 
 
 def process_args():
@@ -33,6 +39,7 @@ def process_args():
 
     if args.input is None:
         raise ValueError('input directory must be defined')
+
     if args.output is None:
         raise ValueError('output directory must be defined')
 
@@ -54,7 +61,18 @@ def process_args():
     }
 
 
+def map_range(x, in_min, in_max, out_min, out_max):
+    out_delta = out_max - out_min
+    in_delta = in_max - in_min
+
+    return (x - in_min) * out_delta / in_delta + out_min
+
+
 options = process_args()
+
+# load data
+data_manager = DataManager()
+data_manager.load("../db/g2x-1479064727.db")
 
 # create renderer
 renderer = pystache.Renderer()
@@ -88,17 +106,27 @@ for frame_file in os.listdir(frame_dir):
     if frame_number < start_frame or end_frame < frame_number:
         continue
 
-    print("processing frame {0}...".format(str(int(frame_number))))
+    print("processing frame {0}".format(str(int(frame_number))))
 
     # load frame
     frame_full_path = frame_dir + "/" + frame_file
     frame = Image.open(frame_full_path, 'r')
 
     # load data
-    frame_data = Data(frame_time)
+    def map_depth(item):
+        return ",".join([
+            str(round(map_range(item[0], frame_time, frame_time + 10, 0, 100), 3)),
+            str(round(map_range(item[1], -2.5, 1000, 0, 300), 3))
+        ])
+
+    depth_data = data_manager.select_depths(frame_time, frame_time + 10)
+    # print(depth_data)
+    depth_path_data = "M" + " ".join(map(map_depth, depth_data))
+    frame_data = Data(frame_time, depth_path_data)
 
     # render SVG text
     svg = renderer.render(template, frame_data)
+    # print(svg)
 
     # create overlay image from SVG
     overlay_bytes = cairosvg.svg2png(bytestring=svg)
