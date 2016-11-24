@@ -115,11 +115,11 @@ for frame_file in os.listdir(frame_dir):
     # load data
     def map_depth(item):
         return ",".join([
-            str(round(map_range(item[0], frame_time, frame_time + 10, 0, 100), 3)),
+            str(round(map_range(item[0], frame_time - 60, frame_time, 0, 100), 3)),
             str(round(map_range(item[1], -2.5, 1000, 0, 300), 3))
         ])
 
-    depth_data = data_manager.select_depths(frame_time, frame_time + 10)
+    depth_data = data_manager.select_depths(frame_time - 60, frame_time)
     # print(depth_data)
     depth_path_data = "M" + " ".join(map(map_depth, depth_data))
     frame_data = Data(frame_time, depth_path_data)
