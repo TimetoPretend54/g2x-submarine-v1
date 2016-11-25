@@ -7,29 +7,23 @@ import re
 import argparse
 import sys
 
-import pystache
 from PIL import Image
 import cairosvg
 
+from SVGGenerator import SVGGenerator
 from DataManager import DataManager
+from Data import Data
+from Chart import Chart
 
-
-class Data:
-    def __init__(self, secs_since_epoch, depth_data):
-        self.time = time.localtime(secs_since_epoch)
-        self.depth_data = depth_data
-
-    def frame_date(self):
-        return time.strftime("%B %d, %Y", self.time)
-
-    def frame_time(self):
-        return time.strftime("%I:%M:%S %p", self.time)
-
-    def frame_depth_data(self):
-        return self.depth_data
+# create regex for extracting time data from file names
+TIME_AND_FRAME_PATTERN = re.compile(r"(\d+)-(\d+)$")
 
 
 def process_args():
+    start = 0
+    end = sys.maxsize
+
+    # parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", help="The directory that contains the input frames")
     parser.add_argument("-o", "--output", help="The directory to write the composited frames")
@@ -37,22 +31,22 @@ def process_args():
     parser.add_argument("-e", "--end", type=int, help="The frame number to end processing")
     args = parser.parse_args()
 
+    # check for required arguments
     if args.input is None:
         raise ValueError('input directory must be defined')
 
     if args.output is None:
         raise ValueError('output directory must be defined')
 
-    if args.start is None:
-        start = 0
-    else:
+    # handle optional arguments
+    if args.start is not None:
         start = args.start
 
-    if args.end is None:
-        end = sys.maxsize
-    else:
+    if args.end is not None:
         end = args.end
 
+    # return dictionary of values
+    # NOTE: what do we need here to be able to use dot notation for these properties?
     return {
         "input": args.input,
         "output": args.output,
@@ -68,65 +62,88 @@ def map_range(x, in_min, in_max, out_min, out_max):
     return (x - in_min) * out_delta / in_delta + out_min
 
 
+def frame_info(frame_file):
+    frame_no_ext = os.path.splitext(frame_file)[0]
+    file_match = TIME_AND_FRAME_PATTERN.search(frame_no_ext)
+    base_time = float(file_match.group(1))
+    frame_number = float(file_match.group(2))
+    frame_time = base_time + frame_number / 24
+
+    return (frame_no_ext, frame_number, frame_time)
+
+
+def get_frame_data(frame_time, frame_full_path):
+    # load data
+    def map_depth(item):
+        result = ",".join([
+            str(round(map_range(item[0], frame_time - 60, frame_time, 0, 100), 3)),
+            # str(round(map_range(item[1], -2.5, 1000, 0, 300), 3))
+            str(round(map_range(item[1], map_depth.start, map_depth.end, 0, 300), 3))
+        ])
+
+        # print("{0} became {1}".format(item, result))
+        return result
+
+    depth_data = data_manager.select_depths(frame_time - 60, frame_time)
+
+    if len(depth_data) > 0:
+        map_depth.start = depth_data[-1][1] - 50
+        map_depth.end = depth_data[-1][1] + 50
+        depth_text = "{0:0.2f} ft".format(depth_data[-1][1])
+        depth_path_data = "M" + " ".join(map(map_depth, depth_data))
+    else:
+        depth_text = "-- ft"
+        depth_path_data = ""
+
+    # for testing
+    temperature_chart = Chart("Temperature", "Temperature", "M0,0 100,100")
+    temperature_chart.x = 5 + 5 + 100 + 5 + 5
+    temperature_chart.y = 972 - 5 - 110
+
+    # print(depth_path_data)
+    return Data(frame_time, depth_text, depth_path_data, temperature_chart, frame_full_path)
+
+
+# process command line arguments
 options = process_args()
 
-# load data
-data_manager = DataManager()
-data_manager.load("../db/g2x-1479064727.db")
-
-# create renderer
-renderer = pystache.Renderer()
-
-# load template
-template_file = open('./overlay.svg.mustache')
-template = template_file.read()
-template_file.close()
-
-# process all files
 frame_dir = options["input"]
 composite_dir = options["output"]
 start_frame = options["start"]
 end_frame = options["end"]
 
-# create regex for extracting time data from file names
-time_and_frame_pattern = re.compile(r"(\d+)-(\d+)$")
+# load data
+data_manager = DataManager()
+data_manager.load("../db/g2x-1479064727.db")
+
+# make svg generator
+generator = SVGGenerator('./overlay.svg.mustache')
 
 # process all frames in the frame directory
 for frame_file in os.listdir(frame_dir):
     if frame_file == ".DS_Store":
         continue
 
-    # extract frame's time from file name
-    frame_no_ext = os.path.splitext(frame_file)[0]
-    file_match = time_and_frame_pattern.search(frame_no_ext)
-    base_time = float(file_match.group(1))
-    frame_number = float(file_match.group(2))
-    frame_time = base_time + frame_number / 24
+    # extract frame number and time from file name
+    (frame_no_ext, frame_number, frame_time) = frame_info(frame_file)
 
+    # skip frames we don't want to process
     if frame_number < start_frame or end_frame < frame_number:
         continue
 
-    print("processing frame {0}".format(str(int(frame_number))))
+    # let the user know which frame we're currently processing
+    print("frame={0}, time={1}".format(str(int(frame_number)), str(round(frame_time, 3))))
 
     # load frame
     frame_full_path = frame_dir + "/" + frame_file
     frame = Image.open(frame_full_path, 'r')
 
-    # load data
-    def map_depth(item):
-        return ",".join([
-            str(round(map_range(item[0], frame_time - 60, frame_time, 0, 100), 3)),
-            str(round(map_range(item[1], -2.5, 1000, 0, 300), 3))
-        ])
-
-    depth_data = data_manager.select_depths(frame_time - 60, frame_time)
-    # print(depth_data)
-    depth_path_data = "M" + " ".join(map(map_depth, depth_data))
-    frame_data = Data(frame_time, depth_path_data)
+    # get data for this frame
+    frame_data = get_frame_data(frame_time, frame_full_path)
 
     # render SVG text
-    svg = renderer.render(template, frame_data)
-    # print(svg)
+    svg = generator.to_svg(frame_data)
+    print(svg)
 
     # create overlay image from SVG
     overlay_bytes = cairosvg.svg2png(bytestring=svg)
@@ -142,3 +159,5 @@ for frame_file in os.listdir(frame_dir):
     # output result
     composite_full_path = composite_dir + "/" + frame_no_ext + ".png"
     composite.save(composite_full_path, optimize=False)
+
+    # cairosvg.svg2png(bytestring=svg, write_to=composite_full_path)
