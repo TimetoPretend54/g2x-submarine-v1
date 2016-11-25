@@ -7,16 +7,7 @@
 	<text x="{{datetime_x}}" y="1em" font-size="{{font_size}}" fill="{{text_color}}" text-anchor="end">{{frame_date}}</text>
 	<text x="{{datetime_x}}" y="2em" font-size="{{font_size}}" fill="{{text_color}}" text-anchor="end">{{frame_time}}</text>
 
-	<!-- Depth Chart -->
-	<svg x="{{padding}}" y="{{depth_background_y}}" width="{{depth_background_width}}" height="{{depth_background_height}}">
-		<rect
-			width="100%" height="100%"
-			fill="{{graph_background_color}}" fill-opacity="{{graph_background_opacity}}"/>
-		<g transform="translate({{padding}},{{padding}})">
-			<path d="{{depth_path_data}}" stroke="{{depth_color}}" fill="none"/>
-		</g>
-		<text x="{{depth_text_x}}" y="{{depth_text_y}}" font-size="{{depth_font_size}}" fill="{{depth_text_color}}" text-anchor="middle">{{depth_text}}</text>
-	</svg>
+	{{{depth_chart}}}
 
 	{{{temperature_chart}}}
 

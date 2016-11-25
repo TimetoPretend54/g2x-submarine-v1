@@ -2,13 +2,11 @@ import time
 
 
 class Data:
-    def __init__(self, secs_since_epoch, depth_text, depth_path_data, temperature_chart, frame_path):
+    def __init__(self, secs_since_epoch, depth_chart, temperature_chart, frame_path):
         # general settings
         self.width = 1296
         self.height = 972
         self.padding = 5
-        self.graph_background_color = "white"
-        self.graph_background_opacity = 0.4
         self.frame_path = frame_path
 
         # date/time settings
@@ -18,16 +16,8 @@ class Data:
         self.font_size = 22
         self.text_color = "rgb(255,255,255)"
         
-        # depth chart 
-        self.depth_text = depth_text
-        self.depth_font_size = 12
-        self.depth_color = "rgb(0,192,0)"
-        self.depth_text_color = "rgb(32,32,32)"
-        self.depth_graph_width = 100
-        self.depth_graph_height = 300
-        self.depth_path_data = depth_path_data
-
-        # temperature chart
+        # charts
+        self.depth_chart = depth_chart.to_svg()
         self.temperature_chart = temperature_chart.to_svg()
 
     @property

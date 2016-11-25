@@ -64,3 +64,11 @@ class DataManager:
             result.extend(region.dataInTimeRegion(start_time, end_time))
 
         return result
+
+    def select_temperatures(self, start_time, end_time):
+        result = []
+
+        for region in self.temperature_regions:
+            result.extend(region.dataInTimeRegion(start_time, end_time))
+
+        return result

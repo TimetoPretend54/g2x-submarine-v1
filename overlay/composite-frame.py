@@ -77,8 +77,7 @@ def get_frame_data(frame_time, frame_full_path):
     def map_depth(item):
         result = ",".join([
             str(round(map_range(item[0], frame_time - 60, frame_time, 0, 100), 3)),
-            # str(round(map_range(item[1], -2.5, 1000, 0, 300), 3))
-            str(round(map_range(item[1], map_depth.start, map_depth.end, 0, 300), 3))
+            str(round(map_range(item[1], map_depth.start, map_depth.end, 0, 100), 3))
         ])
 
         # print("{0} became {1}".format(item, result))
@@ -95,13 +94,35 @@ def get_frame_data(frame_time, frame_full_path):
         depth_text = "-- ft"
         depth_path_data = ""
 
+    def map_temperature(item):
+        result = ",".join([
+            str(round(map_range(item[0], frame_time - 60, frame_time, 0, 100), 3)),
+            str(round(map_range(item[1], 40, 55, 100, 0), 3))
+        ])
+
+        # print("{0} became {1}".format(item, result))
+        return result
+
+    temperature_data = data_manager.select_temperatures(frame_time - 60, frame_time)
+
+    if len(temperature_data) > 0:
+        temperature_text = "{0:0.2f} °F".format(temperature_data[-1][1])
+        temperature_path_data = "M" + " ".join(map(map_temperature, temperature_data))
+    else:
+        temperature_text = "-- °F"
+        temperature_path_data = ""
+
     # for testing
-    temperature_chart = Chart("Temperature", "Temperature", "M0,0 100,100")
+    depth_chart = Chart("Depth", depth_text, depth_path_data)
+    depth_chart.x = 5
+    depth_chart.y = 972 - 5 - 110
+
+    temperature_chart = Chart("Temperature", temperature_text, temperature_path_data)
     temperature_chart.x = 5 + 5 + 100 + 5 + 5
     temperature_chart.y = 972 - 5 - 110
 
     # print(depth_path_data)
-    return Data(frame_time, depth_text, depth_path_data, temperature_chart, frame_full_path)
+    return Data(frame_time, depth_chart, temperature_chart, frame_full_path)
 
 
 # process command line arguments
