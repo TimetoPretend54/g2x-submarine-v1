@@ -13,7 +13,7 @@ class Chart(SVGGenerator):
         self.height = 110
         self.padding = 5
         self.background_color = "white"
-        self.background_opacity = 0.4
+        self.background_opacity = 0.6
         self.path_data = data
         self.path_color = "rgb(0,192,0)"
 
