@@ -10,36 +10,13 @@ class Data:
         self.frame_path = frame_path
 
         # date/time settings
-        self.time = time.localtime(secs_since_epoch)
-        self.frame_date = time.strftime("%B %d, %Y", self.time)
-        self.frame_time = time.strftime("%I:%M:%S %p", self.time)
+        local_time = time.localtime(secs_since_epoch)
+        self.frame_date = time.strftime("%B %d, %Y", local_time)
+        self.frame_time = time.strftime("%I:%M:%S %p", local_time)
         self.font_size = 22
         self.text_color = "rgb(255,255,255)"
+        self.datetime_x = self.width - self.padding
         
         # charts
         self.depth_chart = depth_chart.to_svg()
         self.temperature_chart = temperature_chart.to_svg()
-
-    @property
-    def datetime_x(self):
-        return self.width - self.padding
-
-    @property
-    def depth_background_y(self):
-        return self.height - 3 * self.padding - self.depth_graph_height
-
-    @property
-    def depth_background_width(self):
-        return self.depth_graph_width + 2 * self.padding
-
-    @property
-    def depth_background_height(self):
-        return self.depth_graph_height + 2 * self.padding
-
-    @property
-    def depth_text_x(self):
-        return self.depth_background_width * 0.5
-
-    @property
-    def depth_text_y(self):
-        return self.depth_background_height - self.padding
