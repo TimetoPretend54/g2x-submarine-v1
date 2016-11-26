@@ -8,5 +8,5 @@ class Label(SVGGenerator):
         self.y = y
         self.text = text
         self.alignment = "start"
-        self.font_size = 12
-        self.color = "rgb(64,64,64)"
+        self.font_size = 14
+        self.color = "rgb(0,0,0)"
