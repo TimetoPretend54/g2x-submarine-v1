@@ -15,7 +15,8 @@ class Chart(SVGGenerator):
         self.background_color = "white"
         self.background_opacity = 0.6
         self.path_data = data
-        self.path_color = "rgb(0,192,0)"
+        # self.path_color = "rgb(0,192,0)"
+        self.path_color = "rgb(255,0,0)"
 
     def to_svg(self, data=None):
         label = Label(self.width * 0.5, self.height - self.padding, self.title)
