@@ -22,6 +22,7 @@ TIME_AND_FRAME_PATTERN = re.compile(r"(\d+)-(\d+)$")
 def process_args():
     start = 0
     end = sys.maxsize
+    show_svg = False
 
     # parse arguments
     parser = argparse.ArgumentParser()
@@ -51,7 +52,8 @@ def process_args():
         "input": args.input,
         "output": args.output,
         "start": start,
-        "end": end
+        "end": end,
+        "show_svg": show_svg
     }
 
 
@@ -132,6 +134,7 @@ frame_dir = options["input"]
 composite_dir = options["output"]
 start_frame = options["start"]
 end_frame = options["end"]
+show_svg = options["show_svg"]
 
 # load data
 data_manager = DataManager()
@@ -164,7 +167,8 @@ for frame_file in os.listdir(frame_dir):
 
     # render SVG text
     svg = generator.to_svg(frame_data)
-    print(svg)
+    if show_svg:
+        print(svg)
 
     # create overlay image from SVG
     overlay_bytes = cairosvg.svg2png(bytestring=svg)
