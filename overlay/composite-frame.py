@@ -70,18 +70,18 @@ def map_range(x, in_min, in_max, out_min, out_max):
     return (x - in_min) * out_delta / in_delta + out_min
 
 
-def get_frame_data(frame_time, frame_full_path):
+def get_frame_data(info):
     # load data
     def map_depth(item):
         result = ",".join([
-            str(round(map_range(item[0], frame_time - 60, frame_time, 0, 100), 3)),
+            str(round(map_range(item[0], info.frame_time - 60, info.frame_time, 0, 100), 3)),
             str(round(map_range(item[1], map_depth.start, map_depth.end, 0, 100), 3))
         ])
 
         # print("{0} became {1}".format(item, result))
         return result
 
-    depth_data = data_manager.select_depths(frame_time - 60, frame_time)
+    depth_data = data_manager.select_depths(info.frame_time - 60, info.frame_time)
 
     if len(depth_data) > 0:
         map_depth.start = depth_data[-1][1] - 50
@@ -94,14 +94,14 @@ def get_frame_data(frame_time, frame_full_path):
 
     def map_temperature(item):
         result = ",".join([
-            str(round(map_range(item[0], frame_time - 60, frame_time, 0, 100), 3)),
+            str(round(map_range(item[0], info.frame_time - 60, info.frame_time, 0, 100), 3)),
             str(round(map_range(item[1], 40, 55, 100, 0), 3))
         ])
 
         # print("{0} became {1}".format(item, result))
         return result
 
-    temperature_data = data_manager.select_temperatures(frame_time - 60, frame_time)
+    temperature_data = data_manager.select_temperatures(info.frame_time - 60, info.frame_time)
 
     if len(temperature_data) > 0:
         temperature_text = "{0:0.2f} °F".format(temperature_data[-1][1])
@@ -120,7 +120,7 @@ def get_frame_data(frame_time, frame_full_path):
     temperature_chart.y = 972 - 5 - 110
 
     # print(depth_path_data)
-    return Data(frame_time, depth_chart, temperature_chart, frame_full_path)
+    return Data(info.frame_time, depth_chart, temperature_chart, info.input_path)
 
 
 def process_frame(info):
@@ -128,10 +128,10 @@ def process_frame(info):
     print("frame={0}, time={1}".format(str(int(info.frame_number)), str(round(info.frame_time, 3))))
 
     # load frame
-    frame = Image.open(info.full_path, 'r')
+    frame = Image.open(info.input_path, 'r')
 
     # get data for this frame
-    frame_data = get_frame_data(info.frame_time, info.full_path)
+    frame_data = get_frame_data(info)
 
     # render SVG text
     svg = generator.to_svg(frame_data)
@@ -151,8 +151,7 @@ def process_frame(info):
     composite.paste(overlay, (0, 0), overlay)
 
     # output result
-    composite_full_path = options["output"] + "/" + info.base_name + ".png"
-    composite.save(composite_full_path, optimize=False)
+    composite.save(info.output_path, optimize=False)
 
 
 def process_frames(infos, threads=2):
@@ -163,24 +162,27 @@ def process_frames(infos, threads=2):
     pool.join()
 
 
-# process command line arguments
-options = process_args()
+# 1 thread = 14m9.241s = 849.241s
+# 8 threads = 3m28.195s = 208.195s
+if __name__ == "__main__":
+    # process command line arguments
+    options = process_args()
 
-# load data
-data_manager = DataManager()
-data_manager.load("../db/g2x-1479064727.db")
+    # load data
+    data_manager = DataManager()
+    data_manager.load("../db/g2x-1479064727.db")
 
-# make svg generator
-generator = SVGGenerator('./overlay.svg.mustache')
+    # make svg generator
+    generator = SVGGenerator('./overlay.svg.mustache')
 
-# build list of frames of interest, and their associated metadata
-frames = filter(
-    lambda f: f.in_range(options["start"], options["end"]),
-    map(
-        lambda f: Frame(options["input"], f),
-        os.listdir(options["input"])
+    # build list of frames of interest, and their associated metadata
+    frames = filter(
+        lambda f: f.in_range(options["start"], options["end"]),
+        map(
+            lambda f: Frame(options["input"], options["output"], f),
+            os.listdir(options["input"])
+        )
     )
-)
 
-# process all frames
-process_frames(frames, options["threads"])
+    # process all frames
+    process_frames(frames, options["threads"])

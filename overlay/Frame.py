@@ -6,12 +6,13 @@ TIME_AND_FRAME_PATTERN = re.compile(r"^g2x-(\d+)-(\d+)$")
 
 
 class Frame:
-    def __init__(self, base_dir, frame_file):
-        self.base_dir = base_dir
-        self.frame_file = frame_file
-        self.full_path = self.base_dir + "/" + self.frame_file
-        self.base_name = os.path.splitext(frame_file)[0]
-        file_match = TIME_AND_FRAME_PATTERN.search(self.base_name)
+    def __init__(self, input_dir, output_dir, frame_file):
+        base_name = os.path.splitext(frame_file)[0]
+
+        self.input_path = input_dir + "/" + frame_file
+        self.output_path = output_dir + "/" + base_name + ".png"
+
+        file_match = TIME_AND_FRAME_PATTERN.search(base_name)
 
         if file_match is not None:
             base_time = float(file_match.group(1))
