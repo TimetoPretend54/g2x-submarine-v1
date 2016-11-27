@@ -2,26 +2,26 @@
 
 import os
 import io
-import re
 import argparse
 import sys
+import multiprocessing
+from multiprocessing.dummy import Pool as ThreadPool
 
 from PIL import Image
 import cairosvg
 
+from Frame import Frame
 from SVGGenerator import SVGGenerator
 from DataManager import DataManager
 from Data import Data
 from Chart import Chart
-
-# create regex for extracting time data from file names
-TIME_AND_FRAME_PATTERN = re.compile(r"(\d+)-(\d+)$")
 
 
 def process_args():
     start = 0
     end = sys.maxsize
     show_svg = False
+    threads = multiprocessing.cpu_count()
 
     # parse arguments
     parser = argparse.ArgumentParser()
@@ -29,9 +29,11 @@ def process_args():
     parser.add_argument("-o", "--output", help="The directory to write the composited frames")
     parser.add_argument("-s", "--start", type=int, help="The frame number to start processing")
     parser.add_argument("-e", "--end", type=int, help="The frame number to end processing")
+    parser.add_argument("-t", "--threads", type=int, help="The number of threads to use for processing")
     args = parser.parse_args()
 
     # check for required arguments
+
     if args.input is None:
         raise ValueError('input directory must be defined')
 
@@ -39,11 +41,15 @@ def process_args():
         raise ValueError('output directory must be defined')
 
     # handle optional arguments
+
     if args.start is not None:
         start = args.start
 
     if args.end is not None:
         end = args.end
+
+    if args.threads is not None:
+        threads = args.threads
 
     # return dictionary of values
     # NOTE: what do we need here to be able to use dot notation for these properties?
@@ -52,7 +58,8 @@ def process_args():
         "output": args.output,
         "start": start,
         "end": end,
-        "show_svg": show_svg
+        "show_svg": show_svg,
+        "threads": threads
     }
 
 
@@ -61,16 +68,6 @@ def map_range(x, in_min, in_max, out_min, out_max):
     in_delta = in_max - in_min
 
     return (x - in_min) * out_delta / in_delta + out_min
-
-
-def frame_info(frame_file):
-    frame_no_ext = os.path.splitext(frame_file)[0]
-    file_match = TIME_AND_FRAME_PATTERN.search(frame_no_ext)
-    base_time = float(file_match.group(1))
-    frame_number = float(file_match.group(2))
-    frame_time = base_time + frame_number / 24
-
-    return (frame_no_ext, frame_number, frame_time)
 
 
 def get_frame_data(frame_time, frame_full_path):
@@ -126,47 +123,20 @@ def get_frame_data(frame_time, frame_full_path):
     return Data(frame_time, depth_chart, temperature_chart, frame_full_path)
 
 
-# process command line arguments
-options = process_args()
-
-frame_dir = options["input"]
-composite_dir = options["output"]
-start_frame = options["start"]
-end_frame = options["end"]
-show_svg = options["show_svg"]
-
-# load data
-data_manager = DataManager()
-data_manager.load("../db/g2x-1479064727.db")
-
-# make svg generator
-generator = SVGGenerator('./overlay.svg.mustache')
-
-# process all frames in the frame directory
-for frame_file in os.listdir(frame_dir):
-    if frame_file == ".DS_Store":
-        continue
-
-    # extract frame number and time from file name
-    (frame_no_ext, frame_number, frame_time) = frame_info(frame_file)
-
-    # skip frames we don't want to process
-    if frame_number < start_frame or end_frame < frame_number:
-        continue
-
+def process_frame(info):
     # let the user know which frame we're currently processing
-    print("frame={0}, time={1}".format(str(int(frame_number)), str(round(frame_time, 3))))
+    print("frame={0}, time={1}".format(str(int(info.frame_number)), str(round(info.frame_time, 3))))
 
     # load frame
-    frame_full_path = frame_dir + "/" + frame_file
-    frame = Image.open(frame_full_path, 'r')
+    frame = Image.open(info.full_path, 'r')
 
     # get data for this frame
-    frame_data = get_frame_data(frame_time, frame_full_path)
+    frame_data = get_frame_data(info.frame_time, info.full_path)
 
     # render SVG text
     svg = generator.to_svg(frame_data)
-    if show_svg:
+
+    if options["show_svg"]:
         print(svg)
 
     # create overlay image from SVG
@@ -181,7 +151,36 @@ for frame_file in os.listdir(frame_dir):
     composite.paste(overlay, (0, 0), overlay)
 
     # output result
-    composite_full_path = composite_dir + "/" + frame_no_ext + ".png"
+    composite_full_path = options["output"] + "/" + info.base_name + ".png"
     composite.save(composite_full_path, optimize=False)
 
-    # cairosvg.svg2png(bytestring=svg, write_to=composite_full_path)
+
+def process_frames(infos, threads=2):
+    print("Processing with {0} thread(s)".format(threads))
+    pool = ThreadPool(threads)
+    pool.map(process_frame, infos)
+    pool.close()
+    pool.join()
+
+
+# process command line arguments
+options = process_args()
+
+# load data
+data_manager = DataManager()
+data_manager.load("../db/g2x-1479064727.db")
+
+# make svg generator
+generator = SVGGenerator('./overlay.svg.mustache')
+
+# build list of frames of interest, and their associated metadata
+frames = filter(
+    lambda f: f.in_range(options["start"], options["end"]),
+    map(
+        lambda f: Frame(options["input"], f),
+        os.listdir(options["input"])
+    )
+)
+
+# process all frames
+process_frames(frames, options["threads"])
