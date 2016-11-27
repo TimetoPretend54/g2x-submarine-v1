@@ -5,7 +5,8 @@ import io
 import argparse
 import sys
 import multiprocessing
-from multiprocessing.dummy import Pool as ThreadPool
+import concurrent.futures
+# from multiprocessing.dummy import Pool as ThreadPool
 
 from PIL import Image
 import cairosvg
@@ -156,10 +157,15 @@ def process_frame(info):
 
 def process_frames(infos, threads=2):
     print("Processing with {0} thread(s)".format(threads))
-    pool = ThreadPool(threads)
-    pool.map(process_frame, infos)
-    pool.close()
-    pool.join()
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+        for info in infos:
+            executor.submit(process_frame, info)
+
+    # pool = ThreadPool(threads)
+    # pool.map(process_frame, infos)
+    # pool.close()
+    # pool.join()
 
 
 # 1 thread = 14m9.241s = 849.241s
