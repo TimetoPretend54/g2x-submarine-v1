@@ -6,7 +6,6 @@ import argparse
 import sys
 import multiprocessing
 import concurrent.futures
-# from multiprocessing.dummy import Pool as ThreadPool
 
 from PIL import Image
 import cairosvg
@@ -162,14 +161,7 @@ def process_frames(infos, threads=2):
         for info in infos:
             executor.submit(process_frame, info)
 
-    # pool = ThreadPool(threads)
-    # pool.map(process_frame, infos)
-    # pool.close()
-    # pool.join()
 
-
-# 1 thread = 14m9.241s = 849.241s
-# 8 threads = 3m28.195s = 208.195s
 if __name__ == "__main__":
     # process command line arguments
     options = process_args()
