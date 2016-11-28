@@ -66,10 +66,10 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update
-    sudo apt-get upgrade -y
-    sudo apt-get install -y python3-pip python3-cairo
-    sudo apt-get install libffi-dev
+    apt-get update
+    apt-get upgrade -y
+    apt-get install -y python3-pip python3-cairo
+    apt-get install libffi-dev
     pip3 install cairosvg
     pip3 install pillow
     pip3 install pystache
