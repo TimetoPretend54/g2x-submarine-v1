@@ -68,10 +68,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get upgrade -y
-    apt-get install -y python3-pip python3-cairo
-    apt-get install libffi-dev
-    pip3 install cairosvg
-    pip3 install pillow
-    pip3 install pystache
+    apt-get install -y python3-pip python3-cairo libffi-dev
+    pip3 install cairosvg pillow pystache
   SHELL
 end
