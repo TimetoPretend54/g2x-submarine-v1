@@ -47,16 +47,25 @@ while done is False:
                 if value < 0:
                     motor1.run(Adafruit_MotorHAT.BACKWARD)
                     motor1.setSpeed(-int(value))
-                    motor3.run(Adafruit_MotorHAT.BACKWARD)
+                    motor3.run(Adafruit_MotorHAT.FORWARD)
                     motor3.setSpeed(-int(value))
                 else:
                     motor1.run(Adafruit_MotorHAT.FORWARD)
                     motor1.setSpeed(int(value))
-                    motor3.run(Adafruit_MotorHAT.FORWARD)
+                    motor3.run(Adafruit_MotorHAT.BACKWARD)
                     motor3.setSpeed(int(value))
-            elif event.axis == 1:
-                # print("axis 1 = ", round(event.value, 2))
-                pass
+            # elif event.axis == 1:
+            #     value = round(event.value, 2) * 255
+            #     if value < 0:
+            #         motor1.run(Adafruit_MotorHAT.BACKWARD)
+            #         motor1.setSpeed(-int(value))
+            #         motor3.run(Adafruit_MotorHAT.BACKWARD)
+            #         motor3.setSpeed(-int(value))
+            #     else:
+            #         motor1.run(Adafruit_MotorHAT.FORWARD)
+            #         motor1.setSpeed(int(value))
+            #         motor3.run(Adafruit_MotorHAT.FORWARD)
+            #         motor3.setSpeed(int(value))
             else:
                 pass
                 # print("unknown axis ", event.axis)
