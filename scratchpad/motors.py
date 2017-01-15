@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
-
-import time
+from Adafruit_MotorHAT import Adafruit_MotorHAT
 import atexit
 import pygame
 
