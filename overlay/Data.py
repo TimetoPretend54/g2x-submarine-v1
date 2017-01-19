@@ -16,7 +16,7 @@ class Data:
         self.font_size = 22
         self.text_color = "rgb(255,255,255)"
         self.datetime_x = self.width - self.padding
-        
+
         # charts
         self.depth_chart = depth_chart.to_svg()
         self.temperature_chart = temperature_chart.to_svg()
