@@ -4,8 +4,12 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT
 import atexit
 import pygame
 
+from Vector import Vector
+
 # create a default object, no changes to I2C address or frequency
 mh = Adafruit_MotorHAT(addr=0x60)
+j1 = Vector()
+j2 = Vector()
 
 
 # recommended for auto-disabling motors on shutdown!
@@ -20,12 +24,6 @@ atexit.register(turnOffMotors)
 
 motor1 = mh.getMotor(1)
 motor3 = mh.getMotor(3)
-
-# set the speed to start, from 0 (off) to 255 (max speed)
-# myMotor.setSpeed(150)
-# myMotor.run(Adafruit_MotorHAT.FORWARD)
-# turn on motor
-# myMotor.run(Adafruit_MotorHAT.RELEASE)
 
 pygame.init()
 # screen = pygame.display.set_mode([500, 700])
@@ -43,32 +41,28 @@ while done is False:
             done = True
         elif event.type == pygame.JOYAXISMOTION:
             if event.axis == 0:
-                value = round(event.value, 2) * 255
-                if value < 0:
-                    motor1.run(Adafruit_MotorHAT.BACKWARD)
-                    motor1.setSpeed(-int(value))
-                    motor3.run(Adafruit_MotorHAT.FORWARD)
-                    motor3.setSpeed(-int(value))
-                else:
-                    motor1.run(Adafruit_MotorHAT.FORWARD)
-                    motor1.setSpeed(int(value))
-                    motor3.run(Adafruit_MotorHAT.BACKWARD)
-                    motor3.setSpeed(int(value))
-            # elif event.axis == 1:
-            #     value = round(event.value, 2) * 255
-            #     if value < 0:
-            #         motor1.run(Adafruit_MotorHAT.BACKWARD)
-            #         motor1.setSpeed(-int(value))
-            #         motor3.run(Adafruit_MotorHAT.BACKWARD)
-            #         motor3.setSpeed(-int(value))
-            #     else:
-            #         motor1.run(Adafruit_MotorHAT.FORWARD)
-            #         motor1.setSpeed(int(value))
-            #         motor3.run(Adafruit_MotorHAT.FORWARD)
-            #         motor3.setSpeed(int(value))
+                value = round(event.value, 2)
+                if j1.x != value:
+                    j1.x = value
+                    print("j1 = {}".format(j1))
+            elif event.axis == 1:
+                value = round(event.value, 2)
+                if j1.y != value:
+                    j1.y = value
+                    print("j1 = {}".format(j1))
+            elif event.axis == 2:
+                value = round(event.value, 2)
+                if j2.x != value:
+                    j2.x = value
+                    print("j2 = {}".format(j2))
+            elif event.axis == 5:
+                value = round(event.value, 2)
+                if j2.y != value:
+                    j2.y = value
+                    print("j2 = {}".format(j2))
             else:
-                pass
-                # print("unknown axis ", event.axis)
+                # pass
+                print("unknown axis ", event.axis)
         elif event.type == pygame.JOYBUTTONDOWN:
             print("unhandled button down event")
         elif event.type == pygame.JOYBUTTONUP:
@@ -77,35 +71,3 @@ while done is False:
             print("unhandled hat event")
         elif event.type == pygame.JOYBALLMOTION:
             print("unhandled ball motion event")
-        # clock.tick(20)
-
-
-    # print("Forward! ")
-    # myMotor.run(Adafruit_MotorHAT.FORWARD)
-
-    # print("\tSpeed up...")
-    # for i in range(255):
-    #     myMotor.setSpeed(i)
-    #     time.sleep(0.01)
-
-    # print("\tSlow down...")
-    # for i in reversed(range(255)):
-    #     myMotor.setSpeed(i)
-    #     time.sleep(0.01)
-
-    # print("Backward! ")
-    # myMotor.run(Adafruit_MotorHAT.BACKWARD)
-
-    # print("\tSpeed up...")
-    # for i in range(255):
-    #     myMotor.setSpeed(i)
-    #     time.sleep(0.01)
-
-    # print("\tSlow down...")
-    # for i in reversed(range(255)):
-    #     myMotor.setSpeed(i)
-    #     time.sleep(0.01)
-
-    # print("Release")
-    # myMotor.run(Adafruit_MotorHAT.RELEASE)
-    # time.sleep(1.0)
