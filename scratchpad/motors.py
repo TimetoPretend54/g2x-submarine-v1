@@ -48,6 +48,10 @@ v_back_right_thruster.addIndexValue(180.0, 1.0)
 v_back_right_thruster.addIndexValue(270.0, -1.0)
 v_back_right_thruster.addIndexValue(360.0, -1.0)
 
+# setup ascent/descent controllers
+ascent = -1.0
+descent = -1.0
+
 
 # recommended for auto-disabling motors on shutdown!
 def turnOffMotors():
@@ -59,6 +63,7 @@ def turnOffMotors():
 
 def setMotor(motor_number, value):
     motor = mh.getMotor(motor_number)
+    value *= 255.0
 
     if value < 0:
         motor.run(Adafruit_MotorHAT.BACKWARD)
@@ -69,9 +74,6 @@ def setMotor(motor_number, value):
 
 
 atexit.register(turnOffMotors)
-
-motor1 = mh.getMotor(1)
-motor3 = mh.getMotor(3)
 
 pygame.init()
 # screen = pygame.display.set_mode([500, 700])
@@ -111,17 +113,30 @@ while done is False:
                 if j2.y != value:
                     j2.y = value
                     update_vertical_thrusters = True
+            elif event.axis == 3:
+                value = round(event.value, PRECISION)
+                if descent != value:
+                    descent = value
+                    update_vertical_thrusters = True
+            elif event.axis == 4:
+                value = round(event.value, PRECISION)
+                if ascent != value:
+                    ascent = value
+                    update_vertical_thrusters = True
             else:
-                # pass
                 print("unknown axis ", event.axis)
         elif event.type == pygame.JOYBUTTONDOWN:
-            print("unhandled button down event")
+            pass
+            # print("unhandled button down event")
         elif event.type == pygame.JOYBUTTONUP:
-            print("unhandled button up event")
+            pass
+            # print("unhandled button up event")
         elif event.type == pygame.JOYHATMOTION:
-            print("unhandled hat event")
+            pass
+            # print("unhandled hat event")
         elif event.type == pygame.JOYBALLMOTION:
-            print("unhandled ball motion event")
+            pass
+            # print("unhandled ball motion event")
 
         if update_horizontal_thrusters:
             left_value = left_thruster.valueAtIndex(j1.angle)
@@ -129,12 +144,26 @@ while done is False:
             power = min(1.0, j1.length)
             setMotor(1, left_value * power * 255.0)
             setMotor(3, right_value * power * 255.0)
-        if update_vertical_thrusters:
-            front_value = v_front_thruster.valueAtIndex(j2.angle)
-            back_left_value = v_back_left_thruster.valueAtIndex(j2.angle)
-            back_right_value = v_back_right_thruster.valueAtIndex(j2.angle)
-            power = min(1.0, j2.length)
-            setMotor(2, front_value * power * 255.0)
-            setMotor(1, back_left_value * power * 255.0)
-            setMotor(3, back_right_value * power * 255.0)
 
+        if update_vertical_thrusters:
+            power = min(1.0, j2.length)
+            front_value = v_front_thruster.valueAtIndex(j2.angle) * power
+            back_left_value = v_back_left_thruster.valueAtIndex(j2.angle) * power
+            back_right_value = v_back_right_thruster.valueAtIndex(j2.angle) * power
+            if ascent != -1.0:
+                percent = (1.0 + ascent) / 2.0
+                max_thrust = max(front_value, back_left_value, back_right_value)
+                max_adjust = (1.0 - max_thrust) * percent
+                front_value += max_adjust
+                back_left_value += max_adjust
+                back_right_value += max_adjust
+            elif descent != -1.0:
+                percent = (1.0 + descent) / 2.0
+                min_thrust = min(front_value, back_left_value, back_right_value)
+                max_adjust = (min_thrust - -1.0) * percent
+                front_value -= max_adjust
+                back_left_value -= max_adjust
+                back_right_value -= max_adjust
+            setMotor(2, front_value)
+            setMotor(1, back_left_value)
+            setMotor(3, back_right_value)
