@@ -142,8 +142,8 @@ while done is False:
             left_value = left_thruster.valueAtIndex(j1.angle)
             right_value = right_thruster.valueAtIndex(j1.angle)
             power = min(1.0, j1.length)
-            setMotor(1, left_value * power * 255.0)
-            setMotor(3, right_value * power * 255.0)
+            setMotor(1, left_value * power)
+            setMotor(3, right_value * power)
 
         if update_vertical_thrusters:
             power = min(1.0, j2.length)
