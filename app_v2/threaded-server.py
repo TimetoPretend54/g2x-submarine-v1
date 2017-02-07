@@ -21,7 +21,7 @@ def on_new_client(clientsocket, addr):
         else:
             m = Message(msg)
             controller.update_axis(m.input_index, m.input_value)
-            print(str(m))
+            # print(str(m))
 
         clientsocket.send("OK".encode())
 
