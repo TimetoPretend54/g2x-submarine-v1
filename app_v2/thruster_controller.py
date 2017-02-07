@@ -13,16 +13,20 @@ VC = 2
 VR = 3
 HR = 4
 
+FULL_REVERSE = 246
+NEUTRAL = 369
+FULL_FORWARD = 496
+
 
 class ThrusterController:
     def __init__(self):
         # setup motor controller
         self.motor_controller = PWMController()
-        self.motor_controller.add_device("HL", HL, 0, 369)
-        self.motor_controller.add_device("VL", VL, 0, 369)
-        self.motor_controller.add_device("VC", VC, 0, 369)
-        self.motor_controller.add_device("VR", VR, 0, 369)
-        self.motor_controller.add_device("HR", HR, 0, 369)
+        self.motor_controller.add_device("HL", HL, 0, NEUTRAL)
+        self.motor_controller.add_device("VL", VL, 0, NEUTRAL)
+        self.motor_controller.add_device("VC", VC, 0, NEUTRAL)
+        self.motor_controller.add_device("VR", VR, 0, NEUTRAL)
+        self.motor_controller.add_device("HR", HR, 0, NEUTRAL)
 
         # setup left joystick
         self.j1 = Vector2D()
@@ -68,6 +72,13 @@ class ThrusterController:
         # setup ascent/descent controllers
         self.ascent = -1.0
         self.descent = -1.0
+
+    def __del__(self):
+        self.set_motor(HL, 0.0)
+        self.set_motor(VL, 0.0)
+        self.set_motor(VC, 0.0)
+        self.set_motor(VL, 0.0)
+        self.set_motor(HR, 0.0)
 
     def update_axis(self, axis, value):
         update_horizontal_thrusters = False
@@ -134,7 +145,7 @@ class ThrusterController:
 
     def set_motor(self, motor_number, value):
         motor = self.motor_controller.devices[motor_number]
-        pwm_value = int(map_range(value, -1.0, 1.0, 246, 496))
+        pwm_value = int(map_range(value, -1.0, 1.0, FULL_REVERSE, FULL_FORWARD))
 
         # print("setting motor {0} to {1}".format(motor_number, pwm_value))
         motor.off = pwm_value
