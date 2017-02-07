@@ -8,7 +8,7 @@ from message import Message
 
 PRECISION = 3
 
-host = "localhost"
+host = "192.168.0.1"
 port = 9999
 
 # create a socket object and connect to specified host/port
