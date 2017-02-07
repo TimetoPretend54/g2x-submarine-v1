@@ -1,24 +1,39 @@
 from vector2d import Vector2D
 from interpolator import Interpolator
-from Adafruit_MotorHAT import Adafruit_MotorHAT
+from pwm_controller import PWMController
+from utils import map_range
 
 
 PRECISION = 3
+
+# Motor Constants
+HL = 0
+VL = 1
+VC = 2
+VR = 3
+HR = 4
 
 
 class ThrusterController:
     def __init__(self):
         # setup motor controller
-        self.motor_controller = Adafruit_MotorHAT(addr=0x60)
+        self.motor_controller = PWMController()
+        self.motor_controller.add_device("HL", HL, 0, 369)
+        self.motor_controller.add_device("VL", VL, 0, 369)
+        self.motor_controller.add_device("VC", VC, 0, 369)
+        self.motor_controller.add_device("VR", VR, 0, 369)
+        self.motor_controller.add_device("HR", HR, 0, 369)
 
         # setup left joystick
         self.j1 = Vector2D()
+
         self.left_thruster = Interpolator()
         self.left_thruster.addIndexValue(0.0, -1.0)
         self.left_thruster.addIndexValue(90.0, 1.0)
         self.left_thruster.addIndexValue(180.0, 1.0)
         self.left_thruster.addIndexValue(270.0, -1.0)
         self.left_thruster.addIndexValue(360.0, -1.0)
+
         self.right_thruster = Interpolator()
         self.right_thruster.addIndexValue(0.0, 1.0)
         self.right_thruster.addIndexValue(90.0, 1.0)
@@ -28,18 +43,21 @@ class ThrusterController:
 
         # setup right joystick
         self.j2 = Vector2D()
+
         self.v_front_thruster = Interpolator()
         self.v_front_thruster.addIndexValue(0.0, 0.0)
         self.v_front_thruster.addIndexValue(90.0, -1.0)
         self.v_front_thruster.addIndexValue(180.0, 0.0)
         self.v_front_thruster.addIndexValue(270.0, 1.0)
         self.v_front_thruster.addIndexValue(360.0, 0.0)
+
         self.v_back_left_thruster = Interpolator()
         self.v_back_left_thruster.addIndexValue(0.0, 1.0)
         self.v_back_left_thruster.addIndexValue(90.0, 1.0)
         self.v_back_left_thruster.addIndexValue(180.0, -1.0)
         self.v_back_left_thruster.addIndexValue(270.0, -1.0)
         self.v_back_left_thruster.addIndexValue(360.0, 1.0)
+
         self.v_back_right_thruster = Interpolator()
         self.v_back_right_thruster.addIndexValue(0.0, -1.0)
         self.v_back_right_thruster.addIndexValue(90.0, 1.0)
@@ -50,13 +68,6 @@ class ThrusterController:
         # setup ascent/descent controllers
         self.ascent = -1.0
         self.descent = -1.0
-
-    def __del__(self):
-        print("releasing motors")
-        self.motor_controller.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
-        self.motor_controller.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
-        self.motor_controller.getMotor(3).run(Adafruit_MotorHAT.RELEASE)
-        self.motor_controller.getMotor(4).run(Adafruit_MotorHAT.RELEASE)
 
     def update_axis(self, axis, value):
         update_horizontal_thrusters = False
@@ -75,15 +86,15 @@ class ThrusterController:
             if self.j2.x != value:
                 self.j2.x = value
                 update_vertical_thrusters = True
-        elif axis == 5:
+        elif axis == 3:
             if self.j2.y != value:
                 self.j2.y = value
                 update_vertical_thrusters = True
-        elif axis == 3:
+        elif axis == 4:
             if self.descent != value:
                 self.descent = value
                 update_vertical_thrusters = True
-        elif axis == 4:
+        elif axis == 5:
             if self.ascent != value:
                 self.ascent = value
                 update_vertical_thrusters = True
@@ -95,42 +106,38 @@ class ThrusterController:
             left_value = self.left_thruster.valueAtIndex(self.j1.angle)
             right_value = self.right_thruster.valueAtIndex(self.j1.angle)
             power = min(1.0, self.j1.length)
-            self.setMotor(1, left_value * power)
-            self.setMotor(3, right_value * power)
+            self.set_motor(HL, left_value * power)
+            self.set_motor(HR, right_value * power)
 
         if update_vertical_thrusters:
             power = min(1.0, self.j2.length)
-            front_value = self.v_front_thruster.valueAtIndex(self.j2.angle) * power
-            back_left_value = self.v_back_left_thruster.valueAtIndex(self.j2.angle) * power
-            back_right_value = self.v_back_right_thruster.valueAtIndex(self.j2.angle) * power
+            back_value = self.v_front_thruster.valueAtIndex(self.j2.angle) * power
+            front_left_value = self.v_back_left_thruster.valueAtIndex(self.j2.angle) * power
+            front_right_value = self.v_back_right_thruster.valueAtIndex(self.j2.angle) * power
             if self.ascent != -1.0:
                 percent = (1.0 + self.ascent) / 2.0
-                max_thrust = max(front_value, back_left_value, back_right_value)
+                max_thrust = max(back_value, front_left_value, front_right_value)
                 max_adjust = (1.0 - max_thrust) * percent
-                front_value += max_adjust
-                back_left_value += max_adjust
-                back_right_value += max_adjust
+                back_value += max_adjust
+                front_left_value += max_adjust
+                front_right_value += max_adjust
             elif self.descent != -1.0:
                 percent = (1.0 + self.descent) / 2.0
-                min_thrust = min(front_value, back_left_value, back_right_value)
+                min_thrust = min(back_value, front_left_value, front_right_value)
                 max_adjust = (min_thrust - -1.0) * percent
-                front_value -= max_adjust
-                back_left_value -= max_adjust
-                back_right_value -= max_adjust
-            self.set_motor(2, front_value)
-            self.set_motor(1, back_left_value)
-            self.set_motor(3, back_right_value)
+                back_value -= max_adjust
+                front_left_value -= max_adjust
+                front_right_value -= max_adjust
+            self.set_motor(VC, back_value)
+            self.set_motor(VL, front_left_value)
+            self.set_motor(VR, front_right_value)
 
-        def set_motor(self, motor_number, value):
-            motor = self.motor_controller.getMotor(motor_number)
-            value *= 255.0
+    def set_motor(self, motor_number, value):
+        motor = self.motor_controller.devices[motor_number]
+        pwm_value = int(map_range(value, -1.0, 1.0, 246, 496))
 
-            if value < 0:
-                motor.run(Adafruit_MotorHAT.BACKWARD)
-                motor.setSpeed(-int(value))
-            else:
-                motor.run(Adafruit_MotorHAT.FORWARD)
-                motor.setSpeed(int(value))
+        # print("setting motor {0} to {1}".format(motor_number, pwm_value))
+        motor.off = pwm_value
 
 
 if __name__ == "__main__":
