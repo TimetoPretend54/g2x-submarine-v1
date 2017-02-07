@@ -14,6 +14,7 @@ port = 9999
 # create a socket object and connect to specified host/port
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((host, port))
+print("Connected to server")
 
 
 def close_socket():
@@ -30,7 +31,9 @@ def send_message(controller, type, index, value):
     s.send(bytes(m))
 
     response = s.recv(1024)
-    print(response.decode('ascii'))
+    decoded_response = response.decode('ascii')
+    if decoded_response != "OK":
+        print(decoded_response)
 
 
 atexit.register(close_socket)
