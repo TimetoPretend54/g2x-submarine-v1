@@ -97,15 +97,15 @@ class ThrusterController:
             if self.j2.x != value:
                 self.j2.x = value
                 update_vertical_thrusters = True
-        elif axis == 3:
+        elif axis == 5:
             if self.j2.y != value:
                 self.j2.y = value
                 update_vertical_thrusters = True
-        elif axis == 4:
+        elif axis == 3:
             if self.descent != value:
                 self.descent = value
                 update_vertical_thrusters = True
-        elif axis == 5:
+        elif axis == 4:
             if self.ascent != value:
                 self.ascent = value
                 update_vertical_thrusters = True
