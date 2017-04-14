@@ -125,8 +125,12 @@ with KeyDispatcher() as dispatcher, SQLiteLogger(filename="g2x-pwm.db") as logge
     # signal.signal(signal.SIGKILL, clean_exit)
 
     # [1100µs,1900µs] = [271,467] @ 60Hz
-    handler.add_device("PWM Light", 2, 0, 320)
-    handler.add_device("PWM Thruster", 1, 0, 400)
+    #handler.add_device("PWM Light", 2, 0, 320)
+    handler.add_device("HL", 0, 0, 369)
+    handler.add_device("VL", 1, 0, 369)
+    handler.add_device("VC", 2, 0, 369)
+    handler.add_device("VR", 3, 0, 369)
+    handler.add_device("HR", 4, 0, 369)
 
     dispatcher.add("p", handler, "previous_device")
     dispatcher.add("n", handler, "next_device")
