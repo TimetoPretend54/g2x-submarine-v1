@@ -45,4 +45,4 @@ class SenseController:
         ]
 
     def show_message(self, message):
-        self.sense.show_message(message, text_colour=[0,64,0])
+        self.sense.show_message(message, text_colour=[0, 64, 0])
