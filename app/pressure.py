@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.4
 
 from Pressure import MS5837_30BA
 from KeyDispatcher import KeyDispatcher

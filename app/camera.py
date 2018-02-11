@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.4
 
 from Camera import CameraController
 from KeyDispatcher import KeyDispatcher

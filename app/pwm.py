@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.4
 
 from PWM import PWMController
 from KeyDispatcher import KeyDispatcher

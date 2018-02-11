@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.4
 
 from Sensor import SenseController
 from KeyDispatcher import KeyDispatcher
