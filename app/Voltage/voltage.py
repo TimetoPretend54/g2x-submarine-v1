@@ -3,9 +3,14 @@ import time
 
 ADDRESS = 4
 CMD_READ_ANALOG = 1
-VOLT12 = 650
-VOLT18 = 978
 
+# Submarine v1
+#VOLT12 = 650
+#VOLT18 = 978
+
+# Submarine v2
+VOLT12 = 638
+VOLT18 = 959
 
 def map_range(x, in_min, in_max, out_min, out_max):
     out_delta = out_max - out_min
